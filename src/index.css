@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --color-main-background: #ffffff;
+  --color-accent: #fbb017;
+  --color-accent-2: #ec9324;
+  --color-section-background: #f3f4f6;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #4b5563;
+  --color-header-background: #ffffff;
+  --color-layout-background: #f5f4f4;
+}
+
+/* Orange scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(236, 147, 36, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ec9324;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #d8811d;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ec9324 rgba(236, 147, 36, 0.1);
+}

@@ -1,0 +1,14 @@
+.loader {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  pointer-events: painted;
+  flex-direction: column;
+  gap: 2rem;
+}
