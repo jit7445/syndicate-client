@@ -1,21 +1,21 @@
-import { useEffect } from "react"
-import { useNavigate, useRouteError } from "react-router-dom"
-import styles from "./styles.errorPage.module.css"
+import { useEffect } from "react";
+import { useNavigate, useRouteError } from "react-router-dom";
+import styles from "./styles.errorPage.module.css";
 
 export default function ErrorPage() {
-  const error: any = useRouteError()
-  const pageNotFound = error?.statusText === "Not Found"
-  const navigate = useNavigate()
+  const error: any = useRouteError();
+  const pageNotFound = error?.statusText === "Not Found";
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (pageNotFound) {
-      navigate("/")
+      navigate("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   if (pageNotFound) {
-    return null
+    return null;
   }
 
   return (
@@ -29,7 +29,11 @@ export default function ErrorPage() {
           />
         </defs>
         <g fill="none" fillRule="evenodd">
-          <path fill="#FFF" d="M0 0H1366V800H0z" transform="translate(-448 -157)" />
+          <path
+            fill="#FFF"
+            d="M0 0H1366V800H0z"
+            transform="translate(-448 -157)"
+          />
           <g transform="translate(-448 -157) translate(448 157)">
             <mask id="prefix__b" fill="#fff">
               <use xlinkHref="#prefix__a" />
@@ -92,7 +96,10 @@ export default function ErrorPage() {
               className={styles.leftSparks}
             >
               <path d="M23.684 5.789L30 1.158" transform="rotate(-90 157 13)" />
-              <path d="M0 5.789L6.316 1.158" transform="rotate(-90 157 13) matrix(-1 0 0 1 6.316 0)" />
+              <path
+                d="M0 5.789L6.316 1.158"
+                transform="rotate(-90 157 13) matrix(-1 0 0 1 6.316 0)"
+              />
               <path d="M15.789 4.632L15.789 0" transform="rotate(-90 157 13)" />
             </g>
             <g
@@ -102,9 +109,18 @@ export default function ErrorPage() {
               strokeWidth="1.8"
               className={styles.rightSparks}
             >
-              <path d="M23.684 5.789L30 1.158" transform="matrix(0 -1 -1 0 318 170)" />
-              <path d="M0 5.789L6.316 1.158" transform="matrix(0 -1 -1 0 318 170) matrix(-1 0 0 1 6.316 0)" />
-              <path d="M15.789 4.632L15.789 0" transform="matrix(0 -1 -1 0 318 170)" />
+              <path
+                d="M23.684 5.789L30 1.158"
+                transform="matrix(0 -1 -1 0 318 170)"
+              />
+              <path
+                d="M0 5.789L6.316 1.158"
+                transform="matrix(0 -1 -1 0 318 170) matrix(-1 0 0 1 6.316 0)"
+              />
+              <path
+                d="M15.789 4.632L15.789 0"
+                transform="matrix(0 -1 -1 0 318 170)"
+              />
             </g>
             <path
               fill="#4B4B62"
@@ -117,7 +133,9 @@ export default function ErrorPage() {
           </g>
         </g>
       </svg>
-      <p className={styles.wrongPara}>{error?.message ? error.message : "Uh Oh! Page not found!"}</p>
+      <p className={styles.wrongPara}>
+        {error?.message ? error.message : "Uh Oh! Page not found!"}
+      </p>
     </div>
-  )
+  );
 }

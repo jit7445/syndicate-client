@@ -1,29 +1,32 @@
-import { FormProvider, useForm } from 'react-hook-form'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { defaultFormTheme } from '../../common/defaultFormTheme'
-import Fields from './fields'
-import type { SupportFormValues } from './types'
+import { FormProvider, useForm } from "react-hook-form";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { defaultFormTheme } from "../../common/defaultFormTheme";
+import Fields from "./fields";
+import type { SupportFormValues } from "./types";
 
 type SupportFormProps = {
-  handleSubmitClose: () => void
-}
+  handleSubmitClose: () => void;
+};
 
 const defaultValues: SupportFormValues = {
-  name: '',
-  email: '',
-  message: '',
-}
+  name: "",
+  email: "",
+  message: "",
+};
 
 export default function SupportForm({ handleSubmitClose }: SupportFormProps) {
-  const methods = useForm<SupportFormValues>({ defaultValues })
-  const defaultTheme = createTheme(defaultFormTheme)
+  const methods = useForm<SupportFormValues>({ defaultValues });
+  const defaultTheme = createTheme(defaultFormTheme);
 
   const onSubmit = (data: SupportFormValues) => {
-    // TODO: wire to a real "contact support" endpoint once the backend exists
-    console.log('Support request:', data)
-    methods.reset()
-    handleSubmitClose()
-  }
+    // TODO: replace with a real API call.
+    // POST /api/support
+    // Request body: { name: string, email: string, message: string }
+    // Response: 202 Accepted (fire-and-forget lead capture — wire to email/CRM webhook)
+    console.log("Support request:", data);
+    methods.reset();
+    handleSubmitClose();
+  };
 
   return (
     <FormProvider {...methods}>
@@ -33,5 +36,5 @@ export default function SupportForm({ handleSubmitClose }: SupportFormProps) {
         </form>
       </ThemeProvider>
     </FormProvider>
-  )
+  );
 }

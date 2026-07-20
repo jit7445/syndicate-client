@@ -1,3 +1,3 @@
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 
-export default VerifiedUserIcon
+export default VerifiedUserIcon;

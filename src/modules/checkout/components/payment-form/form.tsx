@@ -1,19 +1,24 @@
-import { FormProvider, useForm } from "react-hook-form"
-import { createTheme, ThemeProvider } from "@mui/material/styles"
-import { defaultFormTheme } from "../../../../common/defaultFormTheme"
-import Button from "../../../../components/button/Button"
-import Fields from "./fields"
-import { DEFAULT_PAYMENT_FORM_VALUES } from "../../constants"
-import type { PaymentFormValues } from "../../types"
+import { FormProvider, useForm } from "react-hook-form";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { defaultFormTheme } from "../../../../common/defaultFormTheme";
+import Button from "../../../../components/button/Button";
+import Fields from "./fields";
+import { DEFAULT_PAYMENT_FORM_VALUES } from "../../constants";
+import type { PaymentFormValues } from "../../types";
 
 type PaymentFormProps = {
-  isSubmitting: boolean
-  onSubmit: (data: PaymentFormValues) => void
-}
+  isSubmitting: boolean;
+  onSubmit: (data: PaymentFormValues) => void;
+};
 
-export default function PaymentForm({ isSubmitting, onSubmit }: PaymentFormProps) {
-  const methods = useForm<PaymentFormValues>({ defaultValues: DEFAULT_PAYMENT_FORM_VALUES })
-  const defaultTheme = createTheme(defaultFormTheme)
+export default function PaymentForm({
+  isSubmitting,
+  onSubmit,
+}: PaymentFormProps) {
+  const methods = useForm<PaymentFormValues>({
+    defaultValues: DEFAULT_PAYMENT_FORM_VALUES,
+  });
+  const defaultTheme = createTheme(defaultFormTheme);
 
   return (
     <FormProvider {...methods}>
@@ -31,5 +36,5 @@ export default function PaymentForm({ isSubmitting, onSubmit }: PaymentFormProps
         </form>
       </ThemeProvider>
     </FormProvider>
-  )
+  );
 }

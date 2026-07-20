@@ -1,15 +1,15 @@
-import { Link } from "react-router-dom"
-import IconButton from "@mui/material/IconButton"
-import Tooltip from "@mui/material/Tooltip"
-import Chip from "../../../../components/chip/Chip"
-import DeleteIcon from "../../../../icons/Delete/Delete"
-import { APP_ROUTES } from "../../../../constants/appRoutes"
-import type { CartItem } from "../../types"
+import { Link } from "react-router-dom";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import Chip from "../../../../components/chip/Chip";
+import DeleteIcon from "../../../../icons/Delete/Delete";
+import { APP_ROUTES } from "../../../../constants/appRoutes";
+import type { CartItem } from "../../types";
 
 type CartItemRowProps = {
-  item: CartItem
-  onRemove: () => void
-}
+  item: CartItem;
+  onRemove: () => void;
+};
 
 export default function CartItemRow({ item, onRemove }: CartItemRowProps) {
   return (
@@ -17,19 +17,29 @@ export default function CartItemRow({ item, onRemove }: CartItemRowProps) {
       <div>
         <Chip label={item.domain} variant="outlined" size="small" />
         <Link to={APP_ROUTES.transcriptDetail.replace(":id", item.id)}>
-          <h3 className="mt-2 font-semibold text-text-primary hover:underline">{item.title}</h3>
+          <h3 className="mt-2 font-semibold text-text-primary hover:underline">
+            {item.title}
+          </h3>
         </Link>
-        <p className="mt-1 text-sm text-text-secondary">{item.readMinutes} min read</p>
+        <p className="mt-1 text-sm text-text-secondary">
+          {item.readMinutes} min read
+        </p>
       </div>
 
       <div className="flex shrink-0 items-center gap-4">
-        <span className="text-lg font-semibold text-text-primary">${item.price}</span>
+        <span className="text-lg font-semibold text-text-primary">
+          ${item.price}
+        </span>
         <Tooltip title="Delete">
-          <IconButton aria-label="Remove" onClick={onRemove} sx={{ color: "#4b5563" }}>
+          <IconButton
+            aria-label="Remove"
+            onClick={onRemove}
+            sx={{ color: "#4b5563" }}
+          >
             <DeleteIcon fontSize="small" />
           </IconButton>
         </Tooltip>
       </div>
     </div>
-  )
+  );
 }

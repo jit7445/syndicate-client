@@ -1,3 +1,3 @@
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
-export default EmailOutlinedIcon
+export default EmailOutlinedIcon;

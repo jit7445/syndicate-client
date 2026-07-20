@@ -1,3 +1,3 @@
-import ShareIcon from '@mui/icons-material/Share'
+import ShareIcon from "@mui/icons-material/Share";
 
-export default ShareIcon
+export default ShareIcon;

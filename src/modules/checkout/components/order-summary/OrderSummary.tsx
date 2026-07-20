@@ -1,9 +1,9 @@
-import type { CartItem } from "../../../cart/types"
+import type { CartItem } from "../../../cart/types";
 
 type OrderSummaryProps = {
-  items: CartItem[]
-  total: number
-}
+  items: CartItem[];
+  total: number;
+};
 
 export default function OrderSummary({ items, total }: OrderSummaryProps) {
   return (
@@ -14,18 +14,24 @@ export default function OrderSummary({ items, total }: OrderSummaryProps) {
         {items.map((item) => (
           <div key={item.id} className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-medium text-text-primary">{item.title}</p>
+              <p className="text-sm font-medium text-text-primary">
+                {item.title}
+              </p>
               <p className="text-xs text-text-secondary">{item.domain}</p>
             </div>
-            <span className="shrink-0 text-sm font-semibold text-text-primary">${item.price}</span>
+            <span className="shrink-0 text-sm font-semibold text-text-primary">
+              ${item.price}
+            </span>
           </div>
         ))}
       </div>
 
       <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4">
         <span className="font-semibold text-text-primary">Total</span>
-        <span className="text-lg font-bold text-text-primary">USD ${total}</span>
+        <span className="text-lg font-bold text-text-primary">
+          USD ${total}
+        </span>
       </div>
     </div>
-  )
+  );
 }

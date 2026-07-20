@@ -1,3 +1,3 @@
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
-export default LockOutlinedIcon
+export default LockOutlinedIcon;

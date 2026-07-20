@@ -1,3 +1,3 @@
-import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
-export default FileDownloadIcon
+export default FileDownloadIcon;

@@ -1,3 +1,3 @@
-import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
-export default AccessTimeIcon
+export default AccessTimeIcon;

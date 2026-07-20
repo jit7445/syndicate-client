@@ -1,3 +1,3 @@
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-export default CheckCircleIcon
+export default CheckCircleIcon;

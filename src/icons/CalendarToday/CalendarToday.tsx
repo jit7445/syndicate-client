@@ -1,3 +1,3 @@
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
-export default CalendarTodayIcon
+export default CalendarTodayIcon;

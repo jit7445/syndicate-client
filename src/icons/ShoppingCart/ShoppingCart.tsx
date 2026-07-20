@@ -1,3 +1,3 @@
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined'
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCartOutlined";
 
-export default ShoppingCartIcon
+export default ShoppingCartIcon;

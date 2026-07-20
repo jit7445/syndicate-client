@@ -1,3 +1,3 @@
-import type { Transcript } from '../transcripts/types'
+import type { Transcript } from "../transcripts/types";
 
-export type CartItem = Transcript
+export type CartItem = Transcript;

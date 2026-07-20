@@ -1,51 +1,69 @@
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import Button from "../../components/button/Button"
-import SearchBar from "../../components/searchbar/SearchBar"
-import Header from "../../components/header/Header"
-import Footer from "../../components/footer/Footer"
-import FeatureCard from "./components/feature-card/FeatureCard"
-import RequestTopicDialog from "../transcripts/components/request-topic-dialog"
-import WarningDialog from "../../components/form-close-warning/WarningDialog"
-import { useBoolean } from "../../utils/hooks/useBoolean"
-import { APP_ROUTES } from "../../constants/appRoutes"
-import { FEATURE_CARDS } from "./constants/homeConstants"
-import styles from "./styles.home.module.css"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Button from "../../components/button/Button";
+import SearchBar from "../../components/searchbar/SearchBar";
+import Header from "../../components/header/Header";
+import Footer from "../../components/footer/Footer";
+import FeatureCard from "./components/feature-card/FeatureCard";
+import RequestTopicDialog from "../transcripts/components/request-topic-dialog";
+import WarningDialog from "../../components/form-close-warning/WarningDialog";
+import { useBoolean } from "../../utils/hooks/useBoolean";
+import { APP_ROUTES } from "../../constants/appRoutes";
+import { FEATURE_CARDS } from "./constants/homeConstants";
+import styles from "./styles.home.module.css";
 
 export default function Home() {
-  const navigate = useNavigate()
-  const [search, setSearch] = useState("")
-  const { value: isRequestTopicOpen, setTrue: openRequestTopic, setFalse: closeRequestTopic } = useBoolean()
-  const { value: isRequestTopicChanged, setTrue: setRequestTopicChanged, setFalse: resetRequestTopicChanged } = useBoolean()
-  const { value: isWarningOpen, setTrue: openWarning, setFalse: closeWarning } = useBoolean()
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const {
+    value: isRequestTopicOpen,
+    setTrue: openRequestTopic,
+    setFalse: closeRequestTopic,
+  } = useBoolean();
+  const {
+    value: isRequestTopicChanged,
+    setTrue: setRequestTopicChanged,
+    setFalse: resetRequestTopicChanged,
+  } = useBoolean();
+  const {
+    value: isWarningOpen,
+    setTrue: openWarning,
+    setFalse: closeWarning,
+  } = useBoolean();
 
   const handleSearch = (text: string) => {
-    navigate(text ? `${APP_ROUTES.transcripts}?q=${encodeURIComponent(text)}` : APP_ROUTES.transcripts)
-  }
+    navigate(
+      text
+        ? `${APP_ROUTES.transcripts}?q=${encodeURIComponent(text)}`
+        : APP_ROUTES.transcripts,
+    );
+  };
 
   const handleRequestTopicClose = () => {
     if (isRequestTopicChanged) {
-      openWarning()
+      openWarning();
     } else {
-      closeRequestTopic()
+      closeRequestTopic();
     }
-  }
+  };
 
   const handleDiscardChanges = () => {
-    closeWarning()
-    resetRequestTopicChanged()
-    closeRequestTopic()
-  }
+    closeWarning();
+    resetRequestTopicChanged();
+    closeRequestTopic();
+  };
 
   const handleRequestTopicSubmitted = () => {
-    resetRequestTopicChanged()
-    closeRequestTopic()
-  }
+    resetRequestTopicChanged();
+    closeRequestTopic();
+  };
 
   return (
-    <div className={`${styles.heroBackground} bg-main-background min-h-screen flex flex-col`}>
+    <div
+      className={`${styles.heroBackground} bg-main-background min-h-screen flex flex-col`}
+    >
       <Header />
-      
+
       <div className="flex-1">
         <div className="mx-auto max-w-4xl px-6 py-12 md:py-16 flex flex-col gap-6 text-center items-center justify-center relative">
           {/* Centered hero content */}
@@ -56,7 +74,9 @@ export default function Home() {
                 <span className="text-accent-2">Already Recorded</span>
               </h1>
               <p className="mt-6 text-lg text-text-secondary leading-relaxed max-w-3xl mx-auto">
-                Every transcript comes from an author recording their view on a topic the market is actively asking about. Search, filter, and get straight to the insight you are looking for.
+                Every transcript comes from an author recording their view on a
+                topic the market is actively asking about. Search, filter, and
+                get straight to the insight you are looking for.
               </p>
             </div>
 
@@ -75,7 +95,7 @@ export default function Home() {
                 backgroundColor="#ffffff"
                 boxShadow="0 4px 20px -2px rgba(0, 0, 0, 0.05)"
                 inputFontSize="16px"
-                m={{ xs: '0', sm: '0' }}
+                m={{ xs: "0", sm: "0" }}
               />
             </div>
 
@@ -87,9 +107,9 @@ export default function Home() {
                   label="Browse transcripts"
                   styles={{
                     fontWeight: 600,
-                    fontSize: '14px',
-                    height: '42px',
-                    padding: '0 28px',
+                    fontSize: "14px",
+                    height: "42px",
+                    padding: "0 28px",
                   }}
                 />
               </Link>
@@ -99,9 +119,9 @@ export default function Home() {
                 onClick={openRequestTopic}
                 styles={{
                   fontWeight: 600,
-                  fontSize: '14px',
-                  height: '42px',
-                  padding: '0 28px',
+                  fontSize: "14px",
+                  height: "42px",
+                  padding: "0 28px",
                 }}
               />
             </div>
@@ -118,7 +138,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Footer style={{ backgroundColor: 'transparent', borderTop: 'none' }} />
+      <Footer style={{ backgroundColor: "transparent", borderTop: "none" }} />
 
       <RequestTopicDialog
         isOpen={isRequestTopicOpen}
@@ -126,7 +146,11 @@ export default function Home() {
         handleFormChange={setRequestTopicChanged}
         handleSubmitClose={handleRequestTopicSubmitted}
       />
-      <WarningDialog open={isWarningOpen} handleClose={closeWarning} handleYesClick={handleDiscardChanges} />
+      <WarningDialog
+        open={isWarningOpen}
+        handleClose={closeWarning}
+        handleYesClick={handleDiscardChanges}
+      />
     </div>
-  )
+  );
 }

@@ -1,8 +1,8 @@
 export const APP_ROUTES = {
-  home: '/',
-  transcripts: '/transcripts',
-  transcriptDetail: '/transcripts/:id',
-  cart: '/cart',
-  checkout: '/checkout',
-  profile: '/profile',
-} as const
+  home: "/",
+  transcripts: "/transcripts",
+  transcriptDetail: "/transcripts/:id",
+  cart: "/cart",
+  checkout: "/checkout",
+  profile: "/profile",
+} as const;

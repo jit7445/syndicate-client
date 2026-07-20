@@ -1,3 +1,3 @@
-import BoltIcon from '@mui/icons-material/Bolt'
+import BoltIcon from "@mui/icons-material/Bolt";
 
-export default BoltIcon
+export default BoltIcon;

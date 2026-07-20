@@ -1,6 +1,6 @@
 type BadgeProps = {
-  label: string
-}
+  label: string;
+};
 
 export default function Badge({ label }: BadgeProps) {
   return (
@@ -14,9 +14,13 @@ export default function Badge({ label }: BadgeProps) {
         className="h-5 w-5 text-accent-2"
       >
         <circle cx="12" cy="12" r="9" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="m8.5 12.5 2.5 2.5 4.5-5" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="m8.5 12.5 2.5 2.5 4.5-5"
+        />
       </svg>
       <span>{label}</span>
     </div>
-  )
+  );
 }

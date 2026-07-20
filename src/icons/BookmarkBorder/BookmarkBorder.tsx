@@ -1,3 +1,3 @@
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 
-export default BookmarkBorderIcon
+export default BookmarkBorderIcon;

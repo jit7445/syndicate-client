@@ -1,3 +1,3 @@
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
-export default InfoOutlinedIcon
+export default InfoOutlinedIcon;

@@ -1,3 +1,3 @@
-import DeleteIcon from '@mui/icons-material/Delete'
+import DeleteIcon from "@mui/icons-material/Delete";
 
-export default DeleteIcon
+export default DeleteIcon;

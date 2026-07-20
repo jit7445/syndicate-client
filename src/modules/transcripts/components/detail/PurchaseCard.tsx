@@ -1,14 +1,18 @@
-import Button from "../../../../components/button/Button"
-import CheckCircleIcon from "../../../../icons/CheckCircle/CheckCircle"
-import { INCLUDED_FEATURES } from "../../pages/transcriptDetailConstants"
+import Button from "../../../../components/button/Button";
+import CheckCircleIcon from "../../../../icons/CheckCircle/CheckCircle";
+import { INCLUDED_FEATURES } from "../../pages/transcriptDetailConstants";
 
 type PurchaseCardProps = {
-  price: number
-  onAddToCart: () => void
-  onBuyNow: () => void
-}
+  price: number;
+  onAddToCart: () => void;
+  onBuyNow: () => void;
+};
 
-export default function PurchaseCard({ price, onAddToCart, onBuyNow }: PurchaseCardProps) {
+export default function PurchaseCard({
+  price,
+  onAddToCart,
+  onBuyNow,
+}: PurchaseCardProps) {
   return (
     <div className="rounded-lg border border-gray-200 bg-main-background p-6">
       <span className="text-2xl font-bold text-text-primary">USD ${price}</span>
@@ -19,10 +23,15 @@ export default function PurchaseCard({ price, onAddToCart, onBuyNow }: PurchaseC
       </div>
 
       <div className="mt-6 border-t border-gray-200 pt-4">
-        <p className="text-sm font-semibold text-text-primary">This transcript includes:</p>
+        <p className="text-sm font-semibold text-text-primary">
+          This transcript includes:
+        </p>
         <ul className="mt-3 flex flex-col gap-2">
           {INCLUDED_FEATURES.map((feature) => (
-            <li key={feature} className="flex items-start gap-2 text-sm text-text-secondary">
+            <li
+              key={feature}
+              className="flex items-start gap-2 text-sm text-text-secondary"
+            >
               <CheckCircleIcon fontSize="small" sx={{ color: "#EC9324" }} />
               {feature}
             </li>
@@ -30,5 +39,5 @@ export default function PurchaseCard({ price, onAddToCart, onBuyNow }: PurchaseC
         </ul>
       </div>
     </div>
-  )
+  );
 }
