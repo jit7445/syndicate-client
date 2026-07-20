@@ -111,7 +111,7 @@ export default function TranscriptsList() {
         component={
           <Button
             variant="outlined"
-            label="Request A Topic"
+            label="Can't find it ? Request A Topic"
             onClick={openRequestTopic}
             styles={{
               fontWeight: 500,

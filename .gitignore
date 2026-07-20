@@ -17,6 +17,9 @@ dist-ssr
 .env.*
 !.env.example
 
+# Internal docs, not meant to be tracked
+PRODUCTION_BACKEND_GUIDE.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
