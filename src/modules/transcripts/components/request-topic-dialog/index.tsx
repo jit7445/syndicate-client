@@ -19,6 +19,17 @@ export default function RequestTopicDialog({
       isOpen={isOpen}
       handleClose={handleClose}
       title="Request a topic"
+      dialogSx={{
+        "& .MuiDialog-paper": {
+          maxWidth: "560px",
+          width: "100%",
+          borderRadius: "16px",
+          overflow: "hidden",
+        },
+      }}
+      contentSx={{
+        padding: "1.25rem 1.5rem",
+      }}
     >
       <RequestTopicForm
         handleClose={handleClose}

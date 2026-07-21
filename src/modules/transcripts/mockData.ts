@@ -86,6 +86,24 @@ const PREVIEW_TEMPLATES = [
   "A frank discussion on {domain}, focused on the tradeoffs decision-makers are weighing this quarter and why the obvious answer is often wrong.",
 ];
 
+const GEOGRAPHIES = [
+  "North America",
+  "Europe",
+  "Asia Pacific",
+  "Latin America",
+  "Middle East & Africa",
+  "Global",
+];
+
+const COVERAGE_HIGHLIGHT_TEMPLATES = [
+  "Which two approaches to {domain} are actually gaining traction, and why the rest are losing ground",
+  "Where internal pushback is slowing adoption in {domain}, and the workaround teams are using instead",
+  "The metric leadership actually tracks to greenlight {domain} initiatives, versus what gets reported upward",
+  "What the budget conversation really looks like behind closed doors for {domain}",
+  "The vendor evaluation criteria that actually matter for {domain}, versus what is on the RFP",
+  "How teams are quietly walking back last year's {domain} commitments",
+];
+
 const FIRST_NAMES = [
   "James",
   "Maria",
@@ -205,6 +223,18 @@ const randomReadMinutes = (): number => {
   return Math.round(61 + rng() * 40);
 };
 
+const generateCoverageHighlights = (domain: string): string[] => {
+  const pool = [...COVERAGE_HIGHLIGHT_TEMPLATES];
+  const highlights: string[] = [];
+
+  for (let i = 0; i < 3 && pool.length > 0; i++) {
+    const index = Math.floor(rng() * pool.length);
+    highlights.push(pool.splice(index, 1)[0].replace("{domain}", domain));
+  }
+
+  return highlights;
+};
+
 const generateAuthor = (): Author => {
   const firstName = pick(FIRST_NAMES);
   const lastName = pick(LAST_NAMES);
@@ -226,20 +256,28 @@ const generateTranscript = (index: number): Transcript => {
   const domain = pick(DOMAINS);
   const record = DOMAIN_LOOKUP.get(domain)!;
   const tags = [
-    ...new Set([domain, record.sector, record.focus].filter(Boolean)),
+    ...new Set([
+      domain,
+      record.sector,
+      record.focus,
+      "Market Intelligence",
+      "Industry Trends",
+    ].filter(Boolean)),
   ];
   const title = pick(TITLE_TEMPLATES).replace("{domain}", domain);
   const preview = pick(PREVIEW_TEMPLATES).replace("{domain}", domain);
 
   return {
     id: `${index + 1}`,
-    title: `${title} #${index + 1}`,
+    title: `${title}`,
     domain,
     tags,
     preview,
     price: randomPrice(),
     readMinutes: randomReadMinutes(),
     date: randomDate(),
+    geography: pick(GEOGRAPHIES),
+    coverageHighlights: generateCoverageHighlights(domain),
     author: generateAuthor(),
   };
 };
@@ -247,14 +285,28 @@ const generateTranscript = (index: number): Transcript => {
 const HANDCRAFTED_TRANSCRIPTS: Transcript[] = [
   {
     id: "1",
-    title: "Enterprise SaaS pricing shifts in a post-AI market",
-    domain: "Enterprise SaaS",
-    tags: ["Enterprise SaaS", "Pricing strategy", "Growth", "B2B"],
+    title:
+      "Comprehensive Analysis of Enterprise Generative AI Integration Architecture, Security Protocols, Legacy System Migration, and Quarterly ROI Benchmarks",
+    domain:
+      "Enterprise SaaS Cloud Infrastructure Multi Tenant System Scaling Performance Optimization Strategies X",
+    tags: [
+      "Enterprise SaaS Cloud Infrastructure Multi Tenant System Scaling Performance Optimization Strategies X",
+      "Artificial Intelligence Machine Learning Model Fine Tuning Governance Compliance Framework Standards",
+      "Global Supply Chain Logistics Risk Management Distribution Channel Network Modernization Strategy X",
+      "Cybersecurity Infrastructure Threat Vector Detection Zero Trust Identity Access Management Standard",
+      "Financial Technology Automated Settlement Real Time Transaction Processing Scalability Network System",
+    ],
     preview:
       "The consumption model that everyone rushed toward in 2023 is quietly being repriced. Most CIOs I speak with are asking for hybrid deals that put a floor under spend while still rewarding heavy usage, and vendors that refuse are being renewed to competitors who will.",
     price: 250,
     readMinutes: 20,
-    date: "Jul 3, 2026",
+    date: "Jul 21, 2026",
+    geography: "North America",
+    coverageHighlights: [
+      "Which two pricing models are actually gaining traction, and why the rest are losing ground",
+      "Where finance pushback is slowing the shift to hybrid deals",
+      "The renewal metric leadership is using to greenlight consumption pricing",
+    ],
     author: {
       name: "Sarah Mitchell",
       title: "VP of Revenue Operations",
@@ -280,6 +332,12 @@ const HANDCRAFTED_TRANSCRIPTS: Transcript[] = [
     price: 250,
     readMinutes: 18,
     date: "Jun 28, 2026",
+    geography: "Asia Pacific",
+    coverageHighlights: [
+      "Which two vendors are actually piloting refurbished lines, and why the third-place player lost ground",
+      "Where compliance is slowing rollout, and the workaround one plant found",
+      "The payback metric leadership is using to greenlight refurb purchases",
+    ],
     author: {
       name: "David Chen",
       title: "Director of Procurement",
@@ -299,6 +357,12 @@ const HANDCRAFTED_TRANSCRIPTS: Transcript[] = [
     price: 200,
     readMinutes: 15,
     date: "Jun 20, 2026",
+    geography: "Global",
+    coverageHighlights: [
+      "Which loyalty mechanics actually move repeat purchase, versus what just feels good in a deck",
+      "Where internal pushback is slowing rollout of tiered rewards",
+      "The retention metric leadership is using to greenlight loyalty spend",
+    ],
     author: {
       name: "Priya Nair",
       title: "Head of Customer Strategy",

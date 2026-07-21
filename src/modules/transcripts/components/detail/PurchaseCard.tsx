@@ -1,15 +1,16 @@
 import Button from "../../../../components/button/Button";
-import CheckCircleIcon from "../../../../icons/CheckCircle/CheckCircle";
-import { INCLUDED_FEATURES } from "../../pages/transcriptDetailConstants";
+import CheckIcon from "../../../../icons/Check/Check";
 
 type PurchaseCardProps = {
   price: number;
+  isInCart: boolean;
   onAddToCart: () => void;
   onBuyNow: () => void;
 };
 
 export default function PurchaseCard({
   price,
+  isInCart,
   onAddToCart,
   onBuyNow,
 }: PurchaseCardProps) {
@@ -19,24 +20,12 @@ export default function PurchaseCard({
 
       <div className="mt-4 flex flex-col gap-3">
         <Button variant="contained" label="Buy Transcript" onClick={onBuyNow} />
-        <Button variant="outlined" label="Add to Cart" onClick={onAddToCart} />
-      </div>
-
-      <div className="mt-6 border-t border-gray-200 pt-4">
-        <p className="text-sm font-semibold text-text-primary">
-          This transcript includes:
-        </p>
-        <ul className="mt-3 flex flex-col gap-2">
-          {INCLUDED_FEATURES.map((feature) => (
-            <li
-              key={feature}
-              className="flex items-start gap-2 text-sm text-text-secondary"
-            >
-              <CheckCircleIcon fontSize="small" sx={{ color: "#EC9324" }} />
-              {feature}
-            </li>
-          ))}
-        </ul>
+        <Button
+          variant="outlined"
+          label={isInCart ? "In Cart" : "Add to Cart"}
+          startIcon={isInCart ? <CheckIcon fontSize="small" /> : undefined}
+          onClick={onAddToCart}
+        />
       </div>
     </div>
   );

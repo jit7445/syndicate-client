@@ -8,7 +8,7 @@ type OrderSummaryProps = {
 export default function OrderSummary({ items, total }: OrderSummaryProps) {
   return (
     <div className="sticky top-6 rounded-lg border border-gray-200 bg-main-background p-6">
-      <h2 className="text-lg font-bold text-text-primary">Order summary</h2>
+      <h2 className="text-lg font-bold text-text-primary">Purchase summary</h2>
 
       <div className="mt-4 flex flex-col gap-4">
         {items.map((item) => (

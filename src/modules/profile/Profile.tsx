@@ -7,14 +7,18 @@ import Footer from "../../components/footer/Footer";
 
 export default function Profile() {
   const { orders } = useOrders();
-  const { userName, email } = useCurrentUser();
+  const { userName, email, companyName } = useCurrentUser();
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
       <div className="flex-1">
         <div className="mx-auto max-w-[1400px] px-6 py-10">
-          <UserDetails userName={userName} email={email} />
+          <UserDetails
+            userName={userName}
+            email={email}
+            companyName={companyName}
+          />
 
           <h2 className="mt-6 text-lg font-bold text-text-primary">
             My purchases

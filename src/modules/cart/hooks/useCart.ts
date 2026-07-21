@@ -1,14 +1,24 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../../redux/store";
-import { addToCart, clearCart, removeFromCart } from "../../../redux/cartSlice";
+import {
+  addToCart,
+  clearCart,
+  removeFromCart,
+  setCartItems,
+} from "../../../redux/cartSlice";
+import {
+  mergeGuestCartIntoAccount,
+  syncAddCartItem,
+  syncClearCart,
+  syncRemoveCartItem,
+} from "../cartService";
 import type { CartItem } from "../types";
 
-// TODO: cart is pure in-memory Redux — lost on every page refresh, no cross-
-// device persistence. Either add redux-persist (localStorage, simplest) or
-// go server-side:
-//   GET    /api/cart                         -> { items: CartItem[] }
-//   POST   /api/cart/items   { transcriptId } -> { items }
-//   DELETE /api/cart/items/:transcriptId      -> { items }
+// Cart items are persisted to localStorage (see cartSlice.ts) so they
+// survive refreshes — the guest-cart-cookie equivalent. Cross-device sync
+// and the account-cart merge are wired below via cartService.ts, but that
+// service is still a local no-op until its /api/cart endpoints are
+// uncommented on the backend.
 export const useCart = () => {
   const dispatch = useDispatch<AppDispatch>();
   const items = useSelector((state: RootState) => state.cart.items);
@@ -17,8 +27,25 @@ export const useCart = () => {
   return {
     items,
     total,
-    addToCart: (item: CartItem) => dispatch(addToCart(item)),
-    removeFromCart: (id: string) => dispatch(removeFromCart(id)),
-    clearCart: () => dispatch(clearCart()),
+    addToCart: (item: CartItem) => {
+      dispatch(addToCart(item));
+      void syncAddCartItem(item);
+    },
+    removeFromCart: (id: string) => {
+      dispatch(removeFromCart(id));
+      void syncRemoveCartItem(id);
+    },
+    clearCart: () => {
+      dispatch(clearCart());
+      void syncClearCart();
+    },
+    // Call once right after a successful sign-in OR sign-up (see form.tsx —
+    // both onSignIn and onVerifyRegisterOtp call this) to fold the local
+    // guest cart into the account's cart, mirroring how Amazon merges a
+    // guest cart the moment you authenticate, regardless of which flow.
+    mergeGuestCartAfterAuth: async () => {
+      const merged = await mergeGuestCartIntoAccount(items);
+      dispatch(setCartItems(merged));
+    },
   };
 };

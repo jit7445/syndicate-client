@@ -1,6 +1,5 @@
 import { Dialog, DialogActions, DialogTitle } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
-import { dialogActionStyle } from "./helper";
 import Button from "../button/Button";
 
 type Props = {
@@ -36,7 +35,9 @@ const WarningDialog = (props: Props) => {
       >
         {text}
       </DialogTitle>
-      <DialogActions sx={dialogActionStyle}>
+      <DialogActions
+        sx={{ display: "flex", gap: "0.25rem", paddingRight: "20px" }}
+      >
         {!hideCancelBtn && (
           <Button label="Cancel" variant="outlined" onClick={handleClose} />
         )}

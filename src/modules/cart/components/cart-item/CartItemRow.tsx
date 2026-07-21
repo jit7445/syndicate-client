@@ -21,9 +21,6 @@ export default function CartItemRow({ item, onRemove }: CartItemRowProps) {
             {item.title}
           </h3>
         </Link>
-        <p className="mt-1 text-sm text-text-secondary">
-          {item.readMinutes} min read
-        </p>
       </div>
 
       <div className="flex shrink-0 items-center gap-4">

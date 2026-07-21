@@ -13,7 +13,6 @@ type HeaderProps = {
   isSearch?: boolean;
   searchPlaceholder?: string;
   searchValue?: string;
-  onSearchChange?: (value: string) => void;
   onSearch?: (value: string) => void;
   isExtraComponent?: boolean;
   component?: ReactNode;
@@ -23,7 +22,6 @@ export default function Header({
   isSearch = false,
   searchPlaceholder = "",
   searchValue = "",
-  onSearchChange,
   onSearch,
   isExtraComponent = false,
   component,
@@ -69,8 +67,6 @@ export default function Header({
               <SearchBar
                 placeholder={searchPlaceholder}
                 searchValue={searchValue}
-                onChangeFunction={onSearchChange}
-                getOnChange
                 onSearch={onSearch ?? (() => {})}
                 maxWidth="100%"
                 height="40px"

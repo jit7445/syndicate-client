@@ -18,7 +18,7 @@ import RelatedTranscripts from "../components/detail/RelatedTranscripts";
 export default function TranscriptDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { items: cartItems, addToCart } = useCart();
   const { openAuthDialog } = useAuthDialog();
   const [transcript, setTranscript] = useState<Transcript | null>(null);
   const [notFound, setNotFound] = useState(false);
@@ -91,6 +91,9 @@ export default function TranscriptDetail() {
             <div className="lg:col-span-8">
               <PreviewSection
                 preview={transcript.preview}
+                date={transcript.date}
+                geography={transcript.geography}
+                coverageHighlights={transcript.coverageHighlights}
                 onBuyClick={handleBuyNow}
               />
               <RelatedTranscripts
@@ -102,6 +105,7 @@ export default function TranscriptDetail() {
             <div className="sticky top-6 flex flex-col gap-6 self-start lg:col-span-4">
               <PurchaseCard
                 price={transcript.price}
+                isInCart={cartItems.some((item) => item.id === transcript.id)}
                 onAddToCart={() => addToCart(transcript)}
                 onBuyNow={handleBuyNow}
               />

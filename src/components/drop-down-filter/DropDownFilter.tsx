@@ -46,7 +46,6 @@ export default function DropDownFilter({
         id="demo-simple-select-standard"
         value={filterValue}
         onChange={handleChange}
-        label="Expert"
         disableUnderline
         sx={{
           fontSize: "0.75rem",

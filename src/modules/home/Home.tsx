@@ -5,6 +5,7 @@ import SearchBar from "../../components/searchbar/SearchBar";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import FeatureCard from "./components/feature-card/FeatureCard";
+import FaqSection from "./components/faq/FaqSection";
 import RequestTopicDialog from "../transcripts/components/request-topic-dialog";
 import WarningDialog from "../../components/form-close-warning/WarningDialog";
 import { useBoolean } from "../../utils/hooks/useBoolean";
@@ -136,6 +137,8 @@ export default function Home() {
             ))}
           </div>
         </div>
+
+        <FaqSection />
       </div>
 
       <Footer style={{ backgroundColor: "transparent", borderTop: "none" }} />

@@ -8,13 +8,18 @@ import { submitCheckout } from "./checkoutService";
 import { getBuyNowItem, clearBuyNowItem } from "./buyNowStorage";
 import PaymentForm from "./components/payment-form/form";
 import OrderSummary from "./components/order-summary/OrderSummary";
-import PurchaseActions from "../transcripts/components/purchase-actions/PurchaseActions";
 import Button from "../../components/button/Button";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import CreditCardIcon from "../../icons/CreditCard/CreditCard";
+import CalendarTodayIcon from "../../icons/CalendarToday/CalendarToday";
+import CheckIcon from "../../icons/Check/Check";
+import DescriptionIcon from "../../icons/Description/Description";
+import DownloadIcon from "../../icons/Download/Download";
+import EmailOutlinedIcon from "../../icons/EmailOutlined/EmailOutlined";
 import { APP_ROUTES } from "../../constants/appRoutes";
 import type { CartItem } from "../cart/types";
+import type { Order } from "../orders/types";
 import type { PaymentFormValues } from "./types";
 
 export default function Checkout() {
@@ -24,41 +29,106 @@ export default function Checkout() {
   const { email } = useCurrentUser();
   const { value: isOrderConfirmed, setTrue: confirmOrder } = useBoolean();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [purchasedItems, setPurchasedItems] = useState<CartItem[]>([]);
+  const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
 
   const items = buyNowItem ? [buyNowItem] : cartItems;
   const total = buyNowItem ? buyNowItem.price : cartTotal;
 
-  if (isOrderConfirmed) {
+  if (isOrderConfirmed && confirmedOrder) {
+    const orderDate = new Date(confirmedOrder.createdAt).toLocaleDateString(
+      "en-US",
+      { month: "short", day: "numeric", year: "numeric" },
+    );
+
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
         <div className="flex-1">
-          <div className="mx-auto max-w-[800px] px-6 py-10 text-center">
-            <h1 className="text-3xl font-bold text-text-primary">
-              Order confirmed
+          <div className="mx-auto max-w-[800px] px-6 py-16 text-center">
+            <div className="relative mx-auto flex h-24 w-24 items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-accent-2/30 blur-xl" />
+              <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-4 border-accent-2 bg-main-background">
+                <CheckIcon sx={{ fontSize: 40, color: "#EC9324" }} />
+              </div>
+            </div>
+
+            <h1 className="mt-4 text-3xl font-bold text-text-primary">
+              Purchase Confirmed
             </h1>
             <p className="mt-2 text-text-secondary">
-              Your transcripts are ready to download.
+              Order #{confirmedOrder.id} · {orderDate}
             </p>
 
-            <div className="mt-6 flex flex-col gap-3 text-left">
-              {purchasedItems.map((item) => (
+            <div className="mt-8 flex flex-col gap-6 text-left">
+              {confirmedOrder.items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-main-background p-4"
+                  className="rounded-lg border border-gray-200 border-t-4 border-t-accent-2 bg-main-background p-6"
                 >
-                  <span className="text-sm font-medium text-text-primary">
-                    {item.title}
-                  </span>
-                  <PurchaseActions transcript={item} />
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent-2">
+                      <DescriptionIcon fontSize="small" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-text-primary">
+                        {item.title}
+                      </p>
+                      <p className="mt-1 flex items-center gap-1 text-sm text-text-secondary">
+                        <CalendarTodayIcon fontSize="inherit" />
+                        <span className="font-medium">Date</span>
+                        <span>{item.date}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4">
+                    <span className="font-semibold text-text-primary">
+                      Amount Paid
+                    </span>
+                    <span className="text-lg font-bold text-text-primary">
+                      USD ${item.price}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 flex items-center gap-3 rounded-lg p-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-2 text-white">
+                      <EmailOutlinedIcon fontSize="small" />
+                    </div>
+                    <p className="text-sm text-text-primary">
+                      A receipt has been sent to your email.
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex gap-3 border-t border-gray-200 pt-4">
+                    <Button
+                      variant="outlined"
+                      label="View Receipt"
+                      startIcon={<DownloadIcon fontSize="small" />}
+                      className="flex-1"
+                      onClick={() =>
+                        // TODO: no receipt/invoice generation endpoint exists yet
+                        console.log("View receipt:", item.id)
+                      }
+                    />
+                    <Link
+                      to={APP_ROUTES.transcriptDetail.replace(":id", item.id)}
+                      className="flex-1"
+                    >
+                      <Button
+                        variant="outlined"
+                        label="View Transcript"
+                        startIcon={<DescriptionIcon fontSize="small" />}
+                        className="w-full"
+                      />
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>
 
             <div className="mt-8">
               <Link to={APP_ROUTES.profile}>
-                <Button variant="contained" label="View My Orders" />
+                <Button variant="contained" label="View My Purchase" />
               </Link>
             </div>
           </div>
@@ -102,7 +172,7 @@ export default function Checkout() {
       //      receives payment_intent.succeeded — see checkoutService.ts)
       const order = await submitCheckout({ items, total, email: email ?? "" });
       addOrder(order);
-      setPurchasedItems(items);
+      setConfirmedOrder(order);
       if (buyNowItem) {
         clearBuyNowItem();
         // Avoid a double-purchase later if this same item was also sitting

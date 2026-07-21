@@ -1,4 +1,4 @@
-export type AuthDialogMode = "signin" | "register";
+export type AuthDialogMode = "signin" | "register" | "forgot-password";
 
 export type SignInFormValues = {
   workEmail: string;
@@ -10,6 +10,14 @@ export type RegisterFormValues = {
   workEmail: string;
   companyName: string;
   password: string;
+};
+
+export type ForgotPasswordFormValues = {
+  email: string;
+};
+
+export type RegisterOtpFormValues = {
+  otp: string;
 };
 
 export type AuthResponse = {

@@ -14,17 +14,33 @@ import { useBoolean } from "../../../utils/hooks/useBoolean";
 import { matchesPrice, matchesPublishedDate } from "../utils/filterMatchers";
 import { DEFAULT_SIDEBAR_FILTERS } from "../components/filter-sidebar/constants";
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from "./transcriptsListConstants";
-import type { SidebarFilterPayload } from "../types";
+import type {
+  PriceFilterValue,
+  PublishedDateFilterValue,
+  SidebarFilterPayload,
+} from "../types";
 
 export default function TranscriptsList() {
   const { transcripts, isLoading, error, loadTranscripts } = useTranscripts();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("q") ?? "");
   const [sidebarFilters, setSidebarFilters] = useState<SidebarFilterPayload>(
-    DEFAULT_SIDEBAR_FILTERS,
+    () => ({
+      domains:
+        searchParams.get("domains")?.split(",").filter(Boolean) ??
+        DEFAULT_SIDEBAR_FILTERS.domains,
+      price:
+        (searchParams.get("price") as PriceFilterValue | null) ??
+        DEFAULT_SIDEBAR_FILTERS.price,
+      publishedDate:
+        (searchParams.get("publishedDate") as PublishedDateFilterValue | null) ??
+        DEFAULT_SIDEBAR_FILTERS.publishedDate,
+    }),
   );
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(PAGE_SIZE);
+  const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+  const [pageSize, setPageSize] = useState(
+    Number(searchParams.get("pageSize")) || PAGE_SIZE,
+  );
   const {
     value: isRequestTopicOpen,
     setTrue: openRequestTopic,
@@ -43,6 +59,7 @@ export default function TranscriptsList() {
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
+    setSidebarFilters(DEFAULT_SIDEBAR_FILTERS);
     setPage(1);
   };
 
@@ -68,6 +85,23 @@ export default function TranscriptsList() {
   useEffect(() => {
     loadTranscripts();
   }, []);
+
+  useEffect(() => {
+    const params: Record<string, string> = {};
+    if (search) params.q = search;
+    if (sidebarFilters.domains.length) {
+      params.domains = sidebarFilters.domains.join(",");
+    }
+    if (sidebarFilters.price !== DEFAULT_SIDEBAR_FILTERS.price) {
+      params.price = sidebarFilters.price;
+    }
+    if (sidebarFilters.publishedDate !== DEFAULT_SIDEBAR_FILTERS.publishedDate) {
+      params.publishedDate = sidebarFilters.publishedDate;
+    }
+    if (page !== 1) params.page = String(page);
+    if (pageSize !== PAGE_SIZE) params.pageSize = String(pageSize);
+    setSearchParams(params, { replace: true });
+  }, [search, sidebarFilters, page, pageSize, setSearchParams]);
 
   const filteredTranscripts = useMemo(() => {
     return transcripts
@@ -105,7 +139,6 @@ export default function TranscriptsList() {
         isSearch
         searchPlaceholder="Search topics, domains, or keywords..."
         searchValue={search}
-        onSearchChange={handleSearchChange}
         onSearch={handleSearchChange}
         isExtraComponent
         component={
@@ -143,11 +176,19 @@ export default function TranscriptsList() {
               {isLoading && <p className="mt-4">Loading transcripts...</p>}
               {error && <p className="mt-4">{error}</p>}
 
-              <div className="mt-4 flex max-h-[960px] flex-col gap-4 overflow-y-scroll pr-2">
-                {paginatedTranscripts.map((transcript) => (
-                  <TranscriptCard key={transcript.id} transcript={transcript} />
-                ))}
-              </div>
+              {!isLoading && !error && filteredTranscripts.length === 0 ? (
+                <div className="mt-8 flex flex-col items-center justify-center    py-16 text-center">
+                  <p className="text-lg font-semibold text-text-primary">
+                    No results found.
+                  </p>
+                </div>
+              ) : (
+                <div className="mt-4 flex max-h-[960px] flex-col gap-3 overflow-y-scroll pr-2">
+                  {paginatedTranscripts.map((transcript) => (
+                    <TranscriptCard key={transcript.id} transcript={transcript} />
+                  ))}
+                </div>
+              )}
 
               <div className="mt-8">
                 <PaginationComponent

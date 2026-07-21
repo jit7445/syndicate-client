@@ -1,8 +1,15 @@
 export const API_ENDPOINTS = {
+  login: "/api/auth/login",
+  register: "/api/auth/register",
+  forgotPassword: "/api/auth/forgot-password",
+  registerOtpSend: "/api/auth/register/otp/send",
+  registerOtpVerify: "/api/auth/register/otp/verify",
   transcripts: "/api/transcripts",
   transcriptDetail: "/api/transcripts/:id",
   checkout: "/api/checkout",
   orders: "/api/orders",
   orderDetail: "/api/orders/:id",
   profile: "/api/profile",
+  topicsRequest: "/api/topics/request",
+  support: "/api/support",
 } as const;

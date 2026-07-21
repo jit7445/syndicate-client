@@ -1,7 +1,9 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "../../../../components/button/Button";
 import { APP_ROUTES } from "../../../../constants/appRoutes";
 import { clearBuyNowItem } from "../../../checkout/buyNowStorage";
+import { useAuthDialog } from "../../../auth/context/AuthDialogContext";
+import { isLoggedIn } from "../../../../utils/authUtils";
 
 type CartSummaryProps = {
   itemCount: number;
@@ -9,6 +11,26 @@ type CartSummaryProps = {
 };
 
 export default function CartSummary({ itemCount, total }: CartSummaryProps) {
+  const navigate = useNavigate();
+  const { openAuthDialog } = useAuthDialog();
+
+  const goToCheckout = () => {
+    clearBuyNowItem();
+    navigate(APP_ROUTES.checkout);
+  };
+
+  const handleCheckoutClick = () => {
+    if (isLoggedIn()) {
+      goToCheckout();
+      return;
+    }
+
+    // Open the sign-in dialog right here on the cart page instead of
+    // navigating to /checkout (which would bounce to the home page via
+    // RequireAuth) — proceed straight to checkout once signed in.
+    openAuthDialog("signin", goToCheckout);
+  };
+
   return (
     <div className="sticky top-6 rounded-lg border border-gray-200 bg-main-background p-6">
       <h2 className="text-lg font-bold text-text-primary">Summary</h2>
@@ -27,13 +49,14 @@ export default function CartSummary({ itemCount, total }: CartSummaryProps) {
         </span>
       </div>
 
-      <Link to={APP_ROUTES.checkout} onClick={clearBuyNowItem}>
+      <div className="mt-5">
         <Button
           variant="contained"
           label="Proceed to Checkout"
-          className="mt-6 w-full"
+          styles={{ width: "100%", height: "42px" }}
+          onClick={handleCheckoutClick}
         />
-      </Link>
+      </div>
     </div>
   );
 }

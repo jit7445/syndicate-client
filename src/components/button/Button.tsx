@@ -32,13 +32,24 @@ export default function Button({
   className,
   ...rest
 }: InputProps) {
+  const isOutlinedAccent = variant === "outlined-accent";
+  const isOutlined = variant === "outlined" || isOutlinedAccent;
+
   return (
     <Btn
       onClick={onClick}
       className={className}
       style={{
-        border: variant === "outlined" ? "1px solid #9ca3af" : "none",
-        color: variant === "outlined" ? "#1f2937" : "white",
+        border: isOutlinedAccent
+          ? "1px solid #EC9324"
+          : variant === "outlined"
+            ? "1px solid #9ca3af"
+            : "none",
+        color: isOutlinedAccent
+          ? "#EC9324"
+          : variant === "outlined"
+            ? "#1f2937"
+            : "white",
         fontSize: "13px",
         borderRadius: "9999px",
         textTransform: "capitalize",
@@ -47,7 +58,7 @@ export default function Button({
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        background: variant === "outlined" ? "transparent" : "#EC9324",
+        background: isOutlined ? "transparent" : "#EC9324",
         boxShadow: "none",
         fontFamily: "inherit",
         opacity: disabled ? "0.4" : "initial",

@@ -19,7 +19,7 @@ export default function Fields() {
           label: "Your name",
           required: true,
         }}
-        gridProps={{ xs: 12, sm: 6 }}
+        gridProps={{ xs: 12 }}
       />
       <HookTextField
         {...registerState("email")}
@@ -35,7 +35,7 @@ export default function Fields() {
           label: "Email",
           required: true,
         }}
-        gridProps={{ xs: 12, sm: 6 }}
+        gridProps={{ xs: 12 }}
       />
       <HookTextField
         {...registerState("message")}
