@@ -1,4 +1,5 @@
 import type { SxProps, Theme } from "@mui/material";
+import type { SystemStyleObject } from "@mui/system";
 
 const MUTED_TEXT_RGB = "37, 43, 59";
 const MUTED_TEXT_COLOR = "#252B3B";
@@ -10,7 +11,7 @@ export function getFormControlSx(noMinWidth: boolean): SxProps<Theme> {
   };
 }
 
-export const selectBaseSx: SxProps<Theme> = {
+export const selectBaseSx: SystemStyleObject<Theme> = {
   fontSize: "0.75rem",
   fontFamily: "inherit",
   fontWeight: "400",

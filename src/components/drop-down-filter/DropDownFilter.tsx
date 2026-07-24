@@ -1,4 +1,5 @@
-import type { SxProps, Theme } from "@mui/material";
+import type { Theme } from "@mui/material";
+import type { SystemStyleObject } from "@mui/system";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -17,7 +18,7 @@ type props = {
   filterValue: string;
   dropDownItems: { label: React.ReactNode; value: string }[];
   noMinWidth?: boolean;
-  selectSx?: SxProps<Theme>;
+  selectSx?: SystemStyleObject<Theme>;
 };
 
 export default function DropDownFilter({
