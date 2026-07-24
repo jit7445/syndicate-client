@@ -1,4 +1,5 @@
 import { API_ENDPOINTS } from "../../constants/apiEndpoints";
+import { API_BASE_URL } from "../../constants/config";
 import { RequestServer } from "../../utils/services";
 import { getStorageItem } from "../../utils/storageUtils";
 import { fetchTranscriptById } from "../transcripts/transcriptsService";
@@ -82,7 +83,7 @@ export const fetchPurchasedTranscriptIds = async (): Promise<string[]> => {
 export const viewOrderReceipt = async (orderId: string): Promise<void> => {
   const token = getStorageItem<string>("token");
   const response = await fetch(
-    API_ENDPOINTS.orderReceipt.replace(":id", orderId),
+    `${API_BASE_URL}${API_ENDPOINTS.orderReceipt.replace(":id", orderId)}`,
     { headers: token ? { Authorization: `Bearer ${token}` } : {} },
   );
   if (!response.ok) throw new Error(`Failed to load receipt: ${response.status}`);

@@ -1,5 +1,6 @@
 import { getStorageItem } from "./storageUtils";
 import { logout } from "./authUtils";
+import { API_BASE_URL } from "../constants/config";
 
 type RequestMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -16,7 +17,7 @@ export const RequestServer = async <T>(
 ): Promise<T> => {
   const token = getStorageItem<string>("token");
 
-  const response = await fetch(url, {
+  const response = await fetch(`${API_BASE_URL}${url}`, {
     method,
     headers: {
       "Content-Type": "application/json",

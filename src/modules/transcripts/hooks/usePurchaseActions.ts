@@ -1,4 +1,5 @@
 import { API_ENDPOINTS } from "../../../constants/apiEndpoints";
+import { API_BASE_URL } from "../../../constants/config";
 import { getStorageItem } from "../../../utils/storageUtils";
 import type { Transcript } from "../types";
 
@@ -19,7 +20,7 @@ export const usePurchaseActions = (
 ) => {
   const handleDownload = async () => {
     const token = getStorageItem<string>("token");
-    const url = `${API_ENDPOINTS.transcriptDownload.replace(":id", transcript.id)}?format=pdf`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.transcriptDownload.replace(":id", transcript.id)}?format=pdf`;
     const response = await fetch(url, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
