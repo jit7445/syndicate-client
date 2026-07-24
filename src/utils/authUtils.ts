@@ -31,23 +31,37 @@ export const decodeJWT = (token: string): JWTPayload | null => {
   }
 };
 
-export const processToken = (token: string): void => {
+export const processToken = (
+  token: string,
+  user?: { id?: string; name?: string; email?: string },
+): void => {
   setStorageItem("token", token);
   setStorageItem("authToken", token);
 
+  // The backend's JWT only carries {id, email} — not a display name — so the
+  // `user` object from the login/register response (when given) takes
+  // priority; JWT claims are just the fallback for the SSO handoff below,
+  // whose tokens carry the older user_id/user_name shape.
   const payload = decodeJWT(token);
-  if (payload) {
-    setStorageItem("userId", payload.user_id);
-    setStorageItem("userName", payload.user_name);
-    setStorageItem("email", payload.email);
-  }
+  const userId = user?.id ?? payload?.user_id;
+  const userName = user?.name ?? payload?.user_name;
+  const email = user?.email ?? payload?.email;
+
+  if (userId) setStorageItem("userId", userId);
+  if (userName) setStorageItem("userName", userName);
+  if (email) setStorageItem("email", email);
 };
 
 export const isLoggedIn = (): boolean => {
   return !!getStorageItem<string>("token");
 };
 
+// TODO: uncomment once the backend exists (fire-and-forget — don't block the
+// redirect on it), delete this comment once wired up.
+// import { API_ENDPOINTS } from "../constants/apiEndpoints";
+// import { RequestServer } from "./services";
 export const logout = (): void => {
+  // void RequestServer(API_ENDPOINTS.logout, "POST");
   clearStorage();
   window.location.href = APP_ROUTES.home;
 };

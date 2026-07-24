@@ -5,6 +5,7 @@ import Button from "../../../../components/button/Button";
 import { useHookFormContext } from "../../../../utils/hooks/useHookFormContext";
 import { validRegex } from "../../../../utils/isValidType";
 import { commonInputStyles } from "../../../../common/input-styles";
+import { COLORS } from "../../../../constants/colors";
 import type { ForgotPasswordFormValues } from "../../types";
 
 type ForgotPasswordFieldsProps = {
@@ -21,7 +22,7 @@ export default function ForgotPasswordFields({
   if (isLinkSent) {
     return (
       <div className="flex flex-col items-center py-2 text-center">
-        <CheckCircleIcon sx={{ fontSize: 40, color: "#EC9324" }} />
+        <CheckCircleIcon sx={{ fontSize: 40, color: COLORS.accent2 }} />
         <p className="mt-3 text-sm font-semibold text-text-primary">
           Reset link sent
         </p>

@@ -1,29 +1,56 @@
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useOrders } from "../orders/hooks/useOrders";
 import { useCurrentUser } from "./hooks/useCurrentUser";
+import { fetchProfile, type Profile as ProfileData } from "./profileService";
 import UserDetails from "./components/user-details/UserDetails";
 import PurchaseHistory from "./components/purchase-history/PurchaseHistory";
+import InvoiceList from "./components/invoice-list/InvoiceList";
+import ProfileSidebar from "./components/sidebar/ProfileSidebar";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
+import type { ProfileTab } from "./types";
 
 export default function Profile() {
-  const { orders } = useOrders();
+  const { orders, loadOrders } = useOrders();
   const { userName, email, companyName } = useCurrentUser();
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [searchParams] = useSearchParams();
+  const sectionParam = searchParams.get("section");
+  const [activeTab, setActiveTab] = useState<ProfileTab>(
+    sectionParam === "purchases" || sectionParam === "invoice"
+      ? sectionParam
+      : "profile",
+  );
+
+  useEffect(() => {
+    loadOrders().catch((err) => console.error("Failed to load orders:", err));
+    fetchProfile()
+      .then(setProfile)
+      .catch((err) => console.error("Failed to load profile:", err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
       <div className="flex-1">
-        <div className="mx-auto max-w-[1400px] px-6 py-10">
-          <UserDetails
-            userName={userName}
-            email={email}
-            companyName={companyName}
-          />
+        <div className="mx-auto max-w-[1800px] px-6 py-10">
+          <div className="flex gap-8">
+            <ProfileSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-          <h2 className="mt-6 text-lg font-bold text-text-primary">
-            My purchases
-          </h2>
-          <PurchaseHistory orders={orders} />
+            <div className="flex-1">
+              {activeTab === "profile" && (
+                <UserDetails
+                  userName={profile?.name ?? userName}
+                  email={profile?.email ?? email}
+                  companyName={companyName}
+                />
+              )}
+              {activeTab === "purchases" && <PurchaseHistory orders={orders} />}
+              {activeTab === "invoice" && <InvoiceList orders={orders} />}
+            </div>
+          </div>
         </div>
       </div>
       <Footer />

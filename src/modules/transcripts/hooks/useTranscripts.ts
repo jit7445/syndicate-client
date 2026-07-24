@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { fetchTranscripts } from "../transcriptsService";
-import type { Transcript } from "../types";
+import type { Transcript, TranscriptsFilterPayload } from "../types";
 
 export const useTranscripts = () => {
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
+  const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadTranscripts = async () => {
+  const loadTranscripts = async (payload: TranscriptsFilterPayload) => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await fetchTranscripts();
-      setTranscripts(data);
+      const data = await fetchTranscripts(payload);
+      setTranscripts(data.items);
+      setTotal(data.total);
     } catch {
       setError("Failed to load transcripts");
     } finally {
@@ -20,5 +22,5 @@ export const useTranscripts = () => {
     }
   };
 
-  return { transcripts, isLoading, error, loadTranscripts };
+  return { transcripts, total, isLoading, error, loadTranscripts };
 };

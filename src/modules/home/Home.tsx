@@ -5,12 +5,15 @@ import SearchBar from "../../components/searchbar/SearchBar";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import FeatureCard from "./components/feature-card/FeatureCard";
+import ContributorCta from "./components/contributor-cta/ContributorCta";
 import FaqSection from "./components/faq/FaqSection";
 import RequestTopicDialog from "../transcripts/components/request-topic-dialog";
 import WarningDialog from "../../components/form-close-warning/WarningDialog";
 import { useBoolean } from "../../utils/hooks/useBoolean";
 import { APP_ROUTES } from "../../constants/appRoutes";
 import { FEATURE_CARDS } from "./constants/homeConstants";
+import { COLORS } from "../../constants/colors";
+import { heroButtonStyle } from "./Home.styles";
 import styles from "./styles.home.module.css";
 
 export default function Home() {
@@ -33,11 +36,8 @@ export default function Home() {
   } = useBoolean();
 
   const handleSearch = (text: string) => {
-    navigate(
-      text
-        ? `${APP_ROUTES.transcripts}?q=${encodeURIComponent(text)}`
-        : APP_ROUTES.transcripts,
-    );
+    if (!text.trim()) return;
+    navigate(`${APP_ROUTES.transcripts}?q=${encodeURIComponent(text)}`);
   };
 
   const handleRequestTopicClose = () => {
@@ -89,11 +89,12 @@ export default function Home() {
                 onChangeFunction={setSearch}
                 getOnChange
                 onSearch={handleSearch}
+                clearTriggersSearch={false}
                 maxWidth="100%"
                 height="56px"
                 submitButtonVariant="orange-circle"
                 borderRadius="9999px"
-                backgroundColor="#ffffff"
+                backgroundColor={COLORS.mainBackground}
                 boxShadow="0 4px 20px -2px rgba(0, 0, 0, 0.05)"
                 inputFontSize="16px"
                 m={{ xs: "0", sm: "0" }}
@@ -101,41 +102,35 @@ export default function Home() {
             </div>
 
             {/* Buttons */}
-            <div className="flex flex-wrap gap-4 justify-center mt-2">
+            <div className="flex flex-wrap gap-4 justify-center mt-12">
               <Link to={APP_ROUTES.transcripts}>
                 <Button
                   variant="contained"
                   label="Browse transcripts"
-                  styles={{
-                    fontWeight: 600,
-                    fontSize: "14px",
-                    height: "42px",
-                    padding: "0 28px",
-                  }}
+                  styles={heroButtonStyle}
                 />
               </Link>
               <Button
                 variant="outlined"
                 label=" Request a Topic"
                 onClick={openRequestTopic}
-                styles={{
-                  fontWeight: 600,
-                  fontSize: "14px",
-                  height: "42px",
-                  padding: "0 28px",
-                }}
+                styles={heroButtonStyle}
               />
             </div>
           </div>
         </div>
 
         {/* Features section (three separate cards) */}
-        <div className="mx-auto mt-8 max-w-[1100px] px-6 pb-12 md:pb-16">
+        <div className="mx-auto mt-8 max-w-[1100px] px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {FEATURE_CARDS.slice(0, 3).map((card) => (
               <FeatureCard key={card.title} {...card} />
             ))}
           </div>
+        </div>
+
+        <div className="mx-auto max-w-275 px-6 pb-32 pt-40 md:pb-40">
+          <ContributorCta />
         </div>
 
         <FaqSection />

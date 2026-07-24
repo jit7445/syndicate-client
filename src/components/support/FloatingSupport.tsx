@@ -1,8 +1,9 @@
 import { useState } from "react";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import CloseIcon from "@mui/icons-material/Close";
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import TextsmsIcon from "@mui/icons-material/Textsms";
 import SupportForm from "./form";
+import { COLORS } from "../../constants/colors";
 
 export default function FloatingSupport() {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,12 +46,13 @@ export default function FloatingSupport() {
           aria-label="Support"
           onClick={handleToggle}
           className="flex h-13 w-13 items-center justify-center rounded-full bg-accent-2 text-white shadow-xl transition-all hover:scale-105 active:scale-95 focus:outline-none"
-          style={{ backgroundColor: "#EC9324" }}
         >
           {isOpen ? (
-            <CloseIcon sx={{ fontSize: 26, color: "#ffffff" }} />
+            <CloseIcon sx={{ fontSize: 26, color: COLORS.mainBackground }} />
           ) : (
-            <SupportAgentIcon sx={{ fontSize: 28, color: "#ffffff" }} />
+            <TextsmsIcon
+              sx={{ fontSize: 28, color: COLORS.mainBackground }}
+            />
           )}
         </button>
       </div>

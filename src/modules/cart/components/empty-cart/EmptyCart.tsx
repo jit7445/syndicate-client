@@ -14,13 +14,14 @@ export default function EmptyCart() {
         Browse our library of verified expert transcripts and add a few to get
         started.
       </p>
-      <Link to={APP_ROUTES.transcripts}>
-        <Button
-          variant="contained"
-          label="Browse Transcripts"
-          className="mt-2"
-        />
-      </Link>
+      <div className="mt-3">
+        <Link to={APP_ROUTES.transcripts}>
+          <Button
+            variant="contained"
+            label="Browse Transcripts"
+          />
+        </Link>
+      </div>
     </div>
   );
 }

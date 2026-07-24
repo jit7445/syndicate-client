@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
+import Tooltip from "../../../../components/tooltip/Tooltip";
 import Chip from "../../../../components/chip/Chip";
 import DeleteIcon from "../../../../icons/Delete/Delete";
 import { APP_ROUTES } from "../../../../constants/appRoutes";
+import { COLORS } from "../../../../constants/colors";
 import type { CartItem } from "../../types";
 
 type CartItemRowProps = {
@@ -27,11 +28,11 @@ export default function CartItemRow({ item, onRemove }: CartItemRowProps) {
         <span className="text-lg font-semibold text-text-primary">
           ${item.price}
         </span>
-        <Tooltip title="Delete">
+        <Tooltip title="Delete" arrow>
           <IconButton
             aria-label="Remove"
             onClick={onRemove}
-            sx={{ color: "#4b5563" }}
+            sx={{ color: COLORS.textSecondary }}
           >
             <DeleteIcon fontSize="small" />
           </IconButton>

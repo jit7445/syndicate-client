@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { useTranscripts } from "../hooks/useTranscripts";
+import { usePurchasedTranscriptIds } from "../../orders/hooks/usePurchasedTranscriptIds";
+import { buildTranscriptsFilterPayload } from "../transcriptsService";
 import TranscriptCard from "../components/cards/TranscriptCard";
 import FilterSidebar from "../components/filter-sidebar/FilterSidebar";
 import Button from "../../../components/button/Button";
@@ -11,7 +13,6 @@ import PaginationComponent from "../../../components/pagination/Pagination";
 import RequestTopicDialog from "../components/request-topic-dialog";
 import WarningDialog from "../../../components/form-close-warning/WarningDialog";
 import { useBoolean } from "../../../utils/hooks/useBoolean";
-import { matchesPrice, matchesPublishedDate } from "../utils/filterMatchers";
 import { DEFAULT_SIDEBAR_FILTERS } from "../components/filter-sidebar/constants";
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from "./transcriptsListConstants";
 import type {
@@ -20,10 +21,15 @@ import type {
   SidebarFilterPayload,
 } from "../types";
 
+const SEARCH_DEBOUNCE_MS = 300;
+
 export default function TranscriptsList() {
-  const { transcripts, isLoading, error, loadTranscripts } = useTranscripts();
+  const { transcripts, total, isLoading, error, loadTranscripts } =
+    useTranscripts();
+  const purchasedIds = usePurchasedTranscriptIds();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("q") ?? "");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
   const [sidebarFilters, setSidebarFilters] = useState<SidebarFilterPayload>(
     () => ({
       domains:
@@ -37,6 +43,7 @@ export default function TranscriptsList() {
         DEFAULT_SIDEBAR_FILTERS.publishedDate,
     }),
   );
+  const [purchasedOnly, setPurchasedOnly] = useState(false);
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
   const [pageSize, setPageSize] = useState(
     Number(searchParams.get("pageSize")) || PAGE_SIZE,
@@ -82,9 +89,12 @@ export default function TranscriptsList() {
     closeRequestTopic();
   };
 
+  // Debounced so typing doesn't fire a network request per keystroke now
+  // that search runs server-side instead of filtering an in-memory array.
   useEffect(() => {
-    loadTranscripts();
-  }, []);
+    const timeout = setTimeout(() => setDebouncedSearch(search), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   useEffect(() => {
     const params: Record<string, string> = {};
@@ -103,35 +113,17 @@ export default function TranscriptsList() {
     setSearchParams(params, { replace: true });
   }, [search, sidebarFilters, page, pageSize, setSearchParams]);
 
-  const filteredTranscripts = useMemo(() => {
-    return transcripts
-      .filter((transcript) =>
-        `${transcript.title} ${transcript.tags.join(" ")}`
-          .toLowerCase()
-          .includes(search.toLowerCase()),
-      )
-      .filter(
-        (transcript) =>
-          sidebarFilters.domains.length === 0 ||
-          sidebarFilters.domains.includes(transcript.domain),
-      )
-      .filter((transcript) =>
-        matchesPrice(transcript.price, sidebarFilters.price),
-      )
-      .filter((transcript) =>
-        matchesPublishedDate(transcript.date, sidebarFilters.publishedDate),
-      )
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [transcripts, search, sidebarFilters]);
+  useEffect(() => {
+    loadTranscripts(
+      buildTranscriptsFilterPayload(debouncedSearch, sidebarFilters, page, pageSize),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch, sidebarFilters, page, pageSize]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredTranscripts.length / pageSize),
-  );
-  const paginatedTranscripts = filteredTranscripts.slice(
-    (page - 1) * pageSize,
-    page * pageSize,
-  );
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const visibleTranscripts = purchasedOnly
+    ? transcripts.filter((transcript) => purchasedIds.includes(transcript.id))
+    : transcripts;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -166,6 +158,8 @@ export default function TranscriptsList() {
                 setSidebarFilters(filters);
                 setPage(1);
               }}
+              purchasedOnly={purchasedOnly}
+              setPurchasedOnly={setPurchasedOnly}
             />
 
             <div className="flex-1">
@@ -176,39 +170,47 @@ export default function TranscriptsList() {
               {isLoading && <p className="mt-4">Loading transcripts...</p>}
               {error && <p className="mt-4">{error}</p>}
 
-              {!isLoading && !error && filteredTranscripts.length === 0 ? (
+              {!isLoading && !error && visibleTranscripts.length === 0 ? (
                 <div className="mt-8 flex flex-col items-center justify-center    py-16 text-center">
                   <p className="text-lg font-semibold text-text-primary">
-                    No results found.
+                    {purchasedOnly
+                      ? "No purchased transcripts on this page."
+                      : "No results found."}
                   </p>
                 </div>
               ) : (
                 <div className="mt-4 flex max-h-[960px] flex-col gap-3 overflow-y-scroll pr-2">
-                  {paginatedTranscripts.map((transcript) => (
-                    <TranscriptCard key={transcript.id} transcript={transcript} />
+                  {visibleTranscripts.map((transcript) => (
+                    <TranscriptCard
+                      key={transcript.id}
+                      transcript={transcript}
+                      isPurchased={purchasedIds.includes(transcript.id)}
+                    />
                   ))}
                 </div>
               )}
 
-              <div className="mt-8">
-                <PaginationComponent
-                  page={page}
-                  totalPages={totalPages}
-                  totalResult={filteredTranscripts.length}
-                  paginationHandler={(_e, value) => setPage(value)}
-                  dropdownFilterProps={{
-                    setFilterPayload: (value) => {
-                      setPageSize(Number(value));
-                      setPage(1);
-                    },
-                    dropDownItems: PAGE_SIZE_OPTIONS.map((size) => ({
-                      label: size,
-                      value: size.toString(),
-                    })),
-                    filterValue: pageSize.toString(),
-                  }}
-                />
-              </div>
+              {total > 0 && !purchasedOnly && (
+                <div className="mt-8">
+                  <PaginationComponent
+                    page={page}
+                    totalPages={totalPages}
+                    totalResult={total}
+                    paginationHandler={(_e, value) => setPage(value)}
+                    dropdownFilterProps={{
+                      setFilterPayload: (value) => {
+                        setPageSize(Number(value));
+                        setPage(1);
+                      },
+                      dropDownItems: PAGE_SIZE_OPTIONS.map((size) => ({
+                        label: size,
+                        value: size.toString(),
+                      })),
+                      filterValue: pageSize.toString(),
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
 

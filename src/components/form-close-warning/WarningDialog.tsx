@@ -28,6 +28,8 @@ const WarningDialog = (props: Props) => {
       open={open}
       onClose={handleClose}
       aria-labelledby="alert-dialog-title"
+      maxWidth="xs"
+      fullWidth
     >
       <DialogTitle
         id="alert-dialog-title"

@@ -1,4 +1,5 @@
 import { CircularProgress } from "@mui/material";
+import { COLORS } from "../../constants/colors";
 import styles from "./styles.module.scss";
 
 type Props = {
@@ -10,7 +11,7 @@ export default function Loading({ loading }: Props) {
     <>
       {loading ? (
         <div className={styles.loader}>
-          <CircularProgress sx={{ color: "#EC9324" }} />
+          <CircularProgress sx={{ color: COLORS.accent2 }} />
         </div>
       ) : null}
     </>

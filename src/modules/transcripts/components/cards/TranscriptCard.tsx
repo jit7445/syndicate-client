@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Tooltip from "@mui/material/Tooltip";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
+import Tooltip from "../../../../components/tooltip/Tooltip";
 import Typography from "@mui/material/Typography";
 import { APP_ROUTES } from "../../../../constants/appRoutes";
 import Button from "../../../../components/button/Button";
@@ -11,19 +10,31 @@ import { setBuyNowItem } from "../../../checkout/buyNowStorage";
 import { useCart } from "../../../cart/hooks/useCart";
 import { useAuthDialog } from "../../../auth/context/AuthDialogContext";
 import { isLoggedIn } from "../../../../utils/authUtils";
+import { formatDate } from "../../../../utils/dateUtils";
 import CheckIcon from "../../../../icons/Check/Check";
+import CheckCircleIcon from "../../../../icons/CheckCircle/CheckCircle";
+import { COLORS } from "../../../../constants/colors";
+import {
+  domainLabelSx,
+  domainChipSx,
+  cartTooltipSx,
+} from "./TranscriptCard.styles";
 import type { Transcript } from "../../types";
 
 type TranscriptCardProps = {
   transcript: Transcript;
+  isPurchased?: boolean;
 };
 
-export default function TranscriptCard({ transcript }: TranscriptCardProps) {
+export default function TranscriptCard({
+  transcript,
+  isPurchased = false,
+}: TranscriptCardProps) {
   const navigate = useNavigate();
-  const { items: cartItems, addToCart } = useCart();
+  const { items: cartItems, addToCart, removeFromCart } = useCart();
   const { openAuthDialog } = useAuthDialog();
   const isInCart = cartItems.some((item) => item.id === transcript.id);
-  const [isTagsTooltipOpen, setIsTagsTooltipOpen] = useState(false);
+  const [suppressCartTooltip, setSuppressCartTooltip] = useState(false);
 
   // Show at most 4 domain chips on the top line. Any remaining tags (e.g. 5th tag) go into [+1 more].
   const visibleCount = Math.min(4, transcript.tags.length);
@@ -59,16 +70,7 @@ export default function TranscriptCard({ transcript }: TranscriptCardProps) {
     <div className="relative rounded-lg border border-gray-200 bg-main-background p-4.5">
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-wrap items-center gap-1.5 min-w-0 flex-1">
-          <Typography
-            variant="body2"
-            component="span"
-            sx={{
-              fontSize: "14px",
-              fontWeight: 600,
-              color: "text.secondary",
-              flexShrink: 0,
-            }}
-          >
+          <Typography variant="body2" component="span" sx={domainLabelSx}>
             Domain:
           </Typography>
           {visibleTags.map((tag) => {
@@ -80,44 +82,22 @@ export default function TranscriptCard({ transcript }: TranscriptCardProps) {
                   label={displayLabel}
                   variant="outlined"
                   size="small"
-                  sx={{
-                    maxWidth: "140px",
-                    "& .MuiChip-label": {
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    },
-                  }}
+                  sx={domainChipSx}
                 />
               </Tooltip>
             );
           })}
           {remainingTagCount > 0 && (
-            <ClickAwayListener onClickAway={() => setIsTagsTooltipOpen(false)}>
-              <Tooltip
-                title={remainingTags.join(", ")}
-                arrow
-                open={isTagsTooltipOpen}
-                onClose={() => setIsTagsTooltipOpen(false)}
-                disableHoverListener
-                disableFocusListener
-                disableTouchListener
-              >
-                <span onClick={() => setIsTagsTooltipOpen((prev) => !prev)}>
-                  <Chip
-                    label={`+${remainingTagCount} more`}
-                    variant="outlined"
-                    size="small"
-                    className="cursor-pointer"
-                  />
-                </span>
-              </Tooltip>
-            </ClickAwayListener>
+            <Tooltip title={remainingTags.join(", ")} arrow>
+              <Chip
+                label={`+${remainingTagCount} more`}
+                variant="outlined"
+                size="small"
+                className="cursor-pointer"
+              />
+            </Tooltip>
           )}
         </div>
-        <span className="shrink-0 text-base font-bold text-text-primary self-start">
-          USD ${transcript.price}
-        </span>
       </div>
 
       <Link to={APP_ROUTES.transcriptDetail.replace(":id", transcript.id)}>
@@ -133,22 +113,52 @@ export default function TranscriptCard({ transcript }: TranscriptCardProps) {
         <Tooltip title="Published Date" arrow>
           <span className="flex items-center gap-1 text-sm text-text-secondary cursor-pointer">
             <CalendarTodayIcon fontSize="inherit" />
-            {transcript.date}
+            {formatDate(transcript.date)}
           </span>
         </Tooltip>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outlined"
-            label={isInCart ? "In Cart" : "Add to Cart"}
-            startIcon={isInCart ? <CheckIcon fontSize="small" /> : undefined}
-            onClick={() => addToCart(transcript)}
-          />
-          <Button
-            variant="contained"
-            label="Buy Transcript"
-            onClick={handleBuyTranscript}
-          />
-        </div>
+        {isPurchased ? (
+          <p className="flex items-center gap-1.5 text-sm font-semibold text-text-primary">
+            <CheckCircleIcon fontSize="small" sx={{ color: COLORS.accent2 }} />
+            Purchased
+          </p>
+        ) : (
+          <div className="flex items-center gap-3">
+            <span className="text-base font-bold text-text-primary">
+              USD ${transcript.price}
+            </span>
+            <Tooltip
+              title={isInCart ? "Click to remove from cart" : ""}
+              arrow
+              disableHoverListener={suppressCartTooltip}
+              slotProps={{
+                tooltip: {
+                  sx: cartTooltipSx,
+                },
+              }}
+            >
+              <span onMouseLeave={() => setSuppressCartTooltip(false)}>
+                <Button
+                  variant="outlined"
+                  label={isInCart ? "In Cart" : "Add to Cart"}
+                  startIcon={isInCart ? <CheckIcon fontSize="small" /> : undefined}
+                  onClick={() => {
+                    setSuppressCartTooltip(true);
+                    if (isInCart) {
+                      removeFromCart(transcript.id);
+                    } else {
+                      addToCart(transcript);
+                    }
+                  }}
+                />
+              </span>
+            </Tooltip>
+            <Button
+              variant="contained"
+              label="Buy Transcript"
+              onClick={handleBuyTranscript}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

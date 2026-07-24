@@ -3,9 +3,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { defaultFormTheme } from "../../../../common/defaultFormTheme";
 import Fields from "./fields";
 import type { RequestTopicFormValues } from "./types";
-// TODO: uncomment once the backend exists (see onSubmit below).
-// import { API_ENDPOINTS } from "../../../../constants/apiEndpoints";
-// import { RequestServer } from "../../../../utils/services";
+import { API_ENDPOINTS } from "../../../../constants/apiEndpoints";
+import { RequestServer } from "../../../../utils/services";
 
 type RequestTopicFormProps = {
   handleClose: () => void;
@@ -17,6 +16,7 @@ const defaultValues: RequestTopicFormValues = {
   domain: "",
   topic: "",
   email: "",
+  remark: "",
   suggestedExpertName: "",
   suggestedExpertLinkedin: "",
 };
@@ -30,14 +30,7 @@ export default function RequestTopicForm({
   const defaultTheme = createTheme(defaultFormTheme);
 
   const onSubmit = async (data: RequestTopicFormValues) => {
-    // TODO: replace with a real API call once the backend exists. Request
-    // body is RequestTopicFormValues (see ./types) -> 202 Accepted
-    // (fire-and-forget lead capture — wire to email/CRM webhook). To
-    // activate: uncomment the imports above, uncomment the line below,
-    // delete the console.log beneath it.
-    //
-    // await RequestServer(API_ENDPOINTS.topicsRequest, "POST", data);
-    console.log("Requested topic:", data);
+    await RequestServer(API_ENDPOINTS.topicsRequest, "POST", data);
     handleSubmitClose();
   };
 

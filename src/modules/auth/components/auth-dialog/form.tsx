@@ -85,7 +85,7 @@ export default function AuthForm({
 
   const onSignIn = async (data: SignInFormValues) => {
     const response = await signIn(data);
-    processToken(response.token);
+    processToken(response.token, response.user);
     await mergeGuestCartAfterAuth();
     handleSubmitClose();
   };
@@ -111,7 +111,7 @@ export default function AuthForm({
     }
 
     const response = await registerUser(pendingRegisterData);
-    processToken(response.token);
+    processToken(response.token, response.user);
     await mergeGuestCartAfterAuth();
     handleSubmitClose();
   };
@@ -130,7 +130,13 @@ export default function AuthForm({
           <form onSubmit={signInMethods.handleSubmit(onSignIn)} noValidate>
             <SignInFields
               onSwitchToRegister={() => setMode("register")}
-              onForgotPassword={() => setMode("forgot-password")}
+              onForgotPassword={() => {
+                forgotPasswordMethods.setValue(
+                  "email",
+                  signInMethods.getValues("workEmail"),
+                );
+                setMode("forgot-password");
+              }}
             />
           </form>
         </FormProvider>
@@ -150,7 +156,13 @@ export default function AuthForm({
           >
             <ForgotPasswordFields
               isLinkSent={isResetLinkSent}
-              onBackToSignIn={() => setMode("signin")}
+              onBackToSignIn={() => {
+                signInMethods.setValue(
+                  "workEmail",
+                  forgotPasswordMethods.getValues("email"),
+                );
+                setMode("signin");
+              }}
             />
           </form>
         </FormProvider>

@@ -1,8 +1,6 @@
-import jsPDF from "jspdf";
-import { APP_ROUTES } from "../../../constants/appRoutes";
+import { API_ENDPOINTS } from "../../../constants/apiEndpoints";
+import { getStorageItem } from "../../../utils/storageUtils";
 import type { Transcript } from "../types";
-
-export type DownloadFormat = "txt" | "pdf" | "docx";
 
 const sanitizeFileName = (title: string): string =>
   title.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
@@ -19,56 +17,16 @@ const downloadBlob = (blob: Blob, fileName: string) => {
 export const usePurchaseActions = (
   transcript: Pick<Transcript, "id" | "title" | "domain" | "preview">,
 ) => {
-  const shareUrl = `${window.location.origin}${APP_ROUTES.transcriptDetail.replace(":id", transcript.id)}`;
-
-  // TODO: replace this whole client-side synthesis with a real API call.
-  // GET /api/transcripts/:id/download?format=txt|pdf|docx
-  // Auth: Bearer token required, and the backend must verify the requesting
-  // user actually purchased THIS transcript (check their orders) before
-  // streaming anything back — 403 otherwise.
-  // Response: the file itself (Content-Type set per format), containing the
-  // real full transcript body — never the short `preview` teaser, which is
-  // the only text this mock has access to. The full-text field must never be
-  // included in GET /api/transcripts or GET /api/transcripts/:id responses;
-  // it should only ever be served through this gated endpoint.
-  const handleDownload = (format: DownloadFormat) => {
-    const content = `${transcript.title}\n${transcript.domain}\n\n${transcript.preview}`;
-    const fileName = sanitizeFileName(transcript.title);
-
-    if (format === "txt") {
-      downloadBlob(
-        new Blob([content], { type: "text/plain" }),
-        `${fileName}.txt`,
-      );
-      return;
-    }
-
-    if (format === "pdf") {
-      const doc = new jsPDF();
-      const lines = doc.splitTextToSize(content, 180);
-      doc.text(lines, 15, 20);
-      doc.save(`${fileName}.pdf`);
-      return;
-    }
-
-    // Word-compatible HTML document — a lightweight way to produce a file Word/Docs
-    // opens without pulling in a full .docx-writing library for a mock demo.
-    const html = `<html><head><meta charset="utf-8"></head><body><h2>${transcript.title}</h2><p>${transcript.domain}</p><p>${transcript.preview}</p></body></html>`;
-    downloadBlob(
-      new Blob([html], { type: "application/msword" }),
-      `${fileName}.doc`,
-    );
+  const handleDownload = async () => {
+    const token = getStorageItem<string>("token");
+    const url = `${API_ENDPOINTS.transcriptDownload.replace(":id", transcript.id)}?format=pdf`;
+    const response = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!response.ok) throw new Error(`Download failed: ${response.status}`);
+    const blob = await response.blob();
+    downloadBlob(blob, `${sanitizeFileName(transcript.title)}.pdf`);
   };
 
-  const handleShare = async (): Promise<"shared" | "copied"> => {
-    if (navigator.share) {
-      await navigator.share({ title: transcript.title, url: shareUrl });
-      return "shared";
-    }
-
-    await navigator.clipboard.writeText(shareUrl);
-    return "copied";
-  };
-
-  return { shareUrl, handleDownload, handleShare };
+  return { handleDownload };
 };

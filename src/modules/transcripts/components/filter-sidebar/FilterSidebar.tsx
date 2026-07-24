@@ -1,12 +1,15 @@
 import RadioGroup from "@mui/material/RadioGroup";
+import Switch from "@mui/material/Switch";
 import CustomRadio from "../../../../components/radio/CustomRadio";
 import FilterSection from "./FilterSection";
 import DomainAutocomplete from "./DomainAutocomplete";
+import { isLoggedIn } from "../../../../utils/authUtils";
 import {
   DEFAULT_SIDEBAR_FILTERS,
   PRICE_OPTIONS,
   PUBLISHED_DATE_OPTIONS,
 } from "./constants";
+import { purchasedOnlySwitchSx } from "./FilterSidebar.styles";
 import type {
   PriceFilterValue,
   PublishedDateFilterValue,
@@ -16,11 +19,15 @@ import type {
 type FilterSidebarProps = {
   filters: SidebarFilterPayload;
   setFilters: (filters: SidebarFilterPayload) => void;
+  purchasedOnly: boolean;
+  setPurchasedOnly: (purchasedOnly: boolean) => void;
 };
 
 export default function FilterSidebar({
   filters,
   setFilters,
+  purchasedOnly,
+  setPurchasedOnly,
 }: FilterSidebarProps) {
   return (
     <div className="w-80 shrink-0 rounded-lg border border-gray-200 bg-main-background p-6">
@@ -34,6 +41,19 @@ export default function FilterSidebar({
           Clear all
         </button>
       </div>
+
+      {isLoggedIn() && (
+        <div className="mt-4 flex items-center justify-between border-b border-gray-200 pb-4">
+          <span className="text-sm font-medium text-text-primary">
+            Purchased only
+          </span>
+          <Switch
+            checked={purchasedOnly}
+            onChange={(e) => setPurchasedOnly(e.target.checked)}
+            sx={purchasedOnlySwitchSx}
+          />
+        </div>
+      )}
 
       <FilterSection title="Domain">
         <DomainAutocomplete

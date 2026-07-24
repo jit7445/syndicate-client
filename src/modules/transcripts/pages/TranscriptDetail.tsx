@@ -3,9 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchTranscriptById } from "../transcriptsService";
 import type { Transcript } from "../types";
 import { useCart } from "../../cart/hooks/useCart";
+import { usePurchasedTranscriptIds } from "../../orders/hooks/usePurchasedTranscriptIds";
 import { setBuyNowItem } from "../../checkout/buyNowStorage";
 import { useAuthDialog } from "../../auth/context/AuthDialogContext";
 import { isLoggedIn } from "../../../utils/authUtils";
+import { RequestServer } from "../../../utils/services";
+import { API_ENDPOINTS } from "../../../constants/apiEndpoints";
 import { APP_ROUTES } from "../../../constants/appRoutes";
 import Header from "../../../components/header/Header";
 import Footer from "../../../components/footer/Footer";
@@ -18,10 +21,13 @@ import RelatedTranscripts from "../components/detail/RelatedTranscripts";
 export default function TranscriptDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { items: cartItems, addToCart } = useCart();
+  const { items: cartItems, addToCart, removeFromCart } = useCart();
   const { openAuthDialog } = useAuthDialog();
   const [transcript, setTranscript] = useState<Transcript | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [fullText, setFullText] = useState<string | null>(null);
+  const purchasedIds = usePurchasedTranscriptIds();
+  const isPurchased = !!id && purchasedIds.includes(id);
 
   useEffect(() => {
     setTranscript(null);
@@ -33,6 +39,19 @@ export default function TranscriptDetail() {
         .catch(() => setNotFound(true));
     }
   }, [id]);
+
+  useEffect(() => {
+    setFullText(null);
+
+    if (!id || !isPurchased) return;
+
+    RequestServer<{ fullText: string }>(
+      API_ENDPOINTS.transcriptFullText.replace(":id", id),
+      "GET",
+    )
+      .then((result) => setFullText(result.fullText))
+      .catch(() => setFullText(null));
+  }, [id, isPurchased]);
 
   if (notFound) {
     return (
@@ -95,6 +114,9 @@ export default function TranscriptDetail() {
                 geography={transcript.geography}
                 coverageHighlights={transcript.coverageHighlights}
                 onBuyClick={handleBuyNow}
+                isPurchased={isPurchased}
+                fullText={fullText}
+                transcript={transcript}
               />
               <RelatedTranscripts
                 domain={transcript.domain}
@@ -103,12 +125,15 @@ export default function TranscriptDetail() {
             </div>
 
             <div className="sticky top-6 flex flex-col gap-6 self-start lg:col-span-4">
-              <PurchaseCard
-                price={transcript.price}
-                isInCart={cartItems.some((item) => item.id === transcript.id)}
-                onAddToCart={() => addToCart(transcript)}
-                onBuyNow={handleBuyNow}
-              />
+              {!isPurchased && (
+                <PurchaseCard
+                  price={transcript.price}
+                  isInCart={cartItems.some((item) => item.id === transcript.id)}
+                  onAddToCart={() => addToCart(transcript)}
+                  onRemoveFromCart={() => removeFromCart(transcript.id)}
+                  onBuyNow={handleBuyNow}
+                />
+              )}
               <AuthorCard author={transcript.author} />
             </div>
           </div>

@@ -1,9 +1,16 @@
+import Tooltip from "../../../../components/tooltip/Tooltip";
+import Chip from "../../../../components/chip/Chip";
 import LockOutlinedIcon from "../../../../icons/LockOutlined/LockOutlined";
 import CalendarTodayIcon from "../../../../icons/CalendarToday/CalendarToday";
 import PublicIcon from "../../../../icons/Public/Public";
 import CheckCircleIcon from "../../../../icons/CheckCircle/CheckCircle";
 import Button from "../../../../components/button/Button";
+import PurchaseActions from "../purchase-actions/PurchaseActions";
+import { formatDate } from "../../../../utils/dateUtils";
 import { LOCKED_PREVIEW_PARAGRAPHS } from "../../pages/transcriptDetailConstants";
+import { COLORS } from "../../../../constants/colors";
+import { purchasedChipSx } from "./PreviewSection.styles";
+import type { Transcript } from "../../types";
 
 type PreviewSectionProps = {
   preview: string;
@@ -11,6 +18,9 @@ type PreviewSectionProps = {
   geography: string;
   coverageHighlights: string[];
   onBuyClick: () => void;
+  isPurchased: boolean;
+  fullText: string | null;
+  transcript: Pick<Transcript, "id" | "title" | "domain" | "preview">;
 };
 
 export default function PreviewSection({
@@ -19,6 +29,9 @@ export default function PreviewSection({
   geography,
   coverageHighlights,
   onBuyClick,
+  isPurchased,
+  fullText,
+  transcript,
 }: PreviewSectionProps) {
   return (
     <div className="rounded-lg border border-gray-200 bg-main-background p-6">
@@ -36,7 +49,10 @@ export default function PreviewSection({
                 key={index}
                 className="flex items-start gap-2 text-sm text-text-secondary"
               >
-                <CheckCircleIcon fontSize="small" sx={{ color: "#EC9324" }} />
+                <CheckCircleIcon
+                  fontSize="small"
+                  sx={{ color: COLORS.accent2 }}
+                />
                 {highlight}
               </li>
             ))}
@@ -44,32 +60,75 @@ export default function PreviewSection({
         </div>
       )}
 
-      <div className="mt-4 flex items-center gap-2 border-t border-gray-200 pt-4 text-sm text-text-secondary">
-        <CalendarTodayIcon fontSize="small" />
-        <span>{date}</span>
+      <div className="mt-4 flex items-center gap-3.5 border-t border-gray-200 pt-4 text-sm text-text-secondary">
+        <Tooltip title="Published Date" arrow>
+          <span className="flex items-center gap-1 cursor-pointer">
+            <CalendarTodayIcon fontSize="small" />
+            <span>{formatDate(date)}</span>
+          </span>
+        </Tooltip>
         <span>·</span>
-        <PublicIcon fontSize="small" />
-        <span>{geography}</span>
+        <Tooltip title="Geographies the insights are most relevant to" arrow>
+          <span className="flex items-center gap-1 cursor-pointer">
+            <PublicIcon fontSize="small" />
+            <span>{geography}</span>
+          </span>
+        </Tooltip>
       </div>
 
-      <div className="relative mt-4">
-        <div aria-hidden className="select-none space-y-3 blur-[4px]">
-          {LOCKED_PREVIEW_PARAGRAPHS.map((paragraph, index) => (
-            <p key={index} className="text-text-secondary">
-              {paragraph}
-            </p>
-          ))}
+      {isPurchased ? (
+        <div className="mt-4 border-t border-gray-200 pt-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h3 className="text-sm font-semibold text-text-primary">
+                Full transcript
+              </h3>
+              <Chip
+                label="Purchased"
+                icon={<CheckCircleIcon fontSize="small" />}
+                size="small"
+                sx={purchasedChipSx}
+              />
+            </div>
+            <PurchaseActions transcript={transcript} />
+          </div>
+          <div className="mt-3 max-h-[700px] overflow-y-auto rounded-md border border-gray-200 bg-white p-6 shadow-inner">
+            <div className="space-y-3">
+              {fullText === null ? (
+                <p className="text-text-secondary">Loading full transcript…</p>
+              ) : (
+                fullText
+                  .split("\n")
+                  .filter((line) => line.trim().length > 0)
+                  .map((line, index) => (
+                    <p key={index} className="text-text-secondary">
+                      {line}
+                    </p>
+                  ))
+              )}
+            </div>
+          </div>
         </div>
+      ) : (
+        <div className="relative mt-4">
+          <div aria-hidden className="select-none space-y-3 blur-[4px]">
+            {LOCKED_PREVIEW_PARAGRAPHS.map((paragraph, index) => (
+              <p key={index} className="text-text-secondary">
+                {paragraph}
+              </p>
+            ))}
+          </div>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-t from-main-background via-main-background/90 to-transparent">
-          <LockOutlinedIcon sx={{ color: "#EC9324" }} />
-          <Button
-            variant="contained"
-            label="Buy Transcript"
-            onClick={onBuyClick}
-          />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-t from-main-background via-main-background/90 to-transparent">
+            <LockOutlinedIcon sx={{ color: COLORS.accent2 }} />
+            <Button
+              variant="contained"
+              label="Buy Transcript"
+              onClick={onBuyClick}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

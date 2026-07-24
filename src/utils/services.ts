@@ -3,6 +3,12 @@ import { logout } from "./authUtils";
 
 type RequestMethod = "GET" | "POST" | "PUT" | "DELETE";
 
+type ApiEnvelope<T> = {
+  success: boolean;
+  message: string;
+  data: T;
+};
+
 export const RequestServer = async <T>(
   url: string,
   method: RequestMethod,
@@ -14,7 +20,7 @@ export const RequestServer = async <T>(
     method,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: token } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: body ? JSON.stringify(body) : undefined,
   });
@@ -24,9 +30,11 @@ export const RequestServer = async <T>(
     throw new Error("Session expired");
   }
 
+  const json = await response.json();
+
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    throw new Error(json?.message || `Request failed: ${response.status}`);
   }
 
-  return response.json();
+  return (json as ApiEnvelope<T>).data;
 };

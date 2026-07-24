@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
+import Tooltip from "../../../../components/tooltip/Tooltip";
 import { HookTextField } from "../../../../components/form-fields/SLFieldTextField";
 import { HookSelect } from "../../../../components/form-fields/SLFieldSelect";
 import FormCancelSubmitBtns from "../../../../components/form-cancel-submit-btns/FormCancelSubmitBtns";
@@ -39,15 +39,6 @@ export default function Fields({ handleClose, handleFormChange }: FieldsProps) {
 
   return (
     <Grid container spacing={2} mt="1px">
-      <HookSelect
-        {...registerState("domain")}
-        rules={{ required: { value: true, message: "This field is required" } }}
-        label="Domain"
-        items={DOMAIN_OPTIONS}
-        gridProps={{ xs: 12 }}
-        formControlProps={{ margin: "none" }}
-        selectProps={{ size: "small" }}
-      />
       <HookTextField
         {...registerState("topic")}
         rules={{ required: { value: true, message: "This field is required" } }}
@@ -59,10 +50,18 @@ export default function Fields({ handleClose, handleFormChange }: FieldsProps) {
         }}
         gridProps={{ xs: 12 }}
       />
+      <HookSelect
+        {...registerState("domain")}
+        rules={{ required: { value: true, message: "This field is required" } }}
+        label="Domain"
+        items={DOMAIN_OPTIONS}
+        gridProps={{ xs: 12 }}
+        formControlProps={{ margin: "none" }}
+        selectProps={{ size: "small" }}
+      />
       <HookTextField
         {...registerState("email")}
         rules={{
-          required: { value: true, message: "This field is required" },
           pattern: {
             value: validRegex("email"),
             message: "Please enter a correct email",
@@ -72,15 +71,25 @@ export default function Fields({ handleClose, handleFormChange }: FieldsProps) {
           ...commonInputStyles,
           label: "Email",
           placeholder: "So we can notify you when it's ready",
-          required: true,
+        }}
+        gridProps={{ xs: 12 }}
+      />
+      <HookTextField
+        {...registerState("remark")}
+        textFieldProps={{
+          ...commonInputStyles,
+          label: "Remark",
+          placeholder: "Any additional notes",
+          multiline: true,
+          minRows: 2,
         }}
         gridProps={{ xs: 12 }}
       />
 
-      <Grid item xs={12} sx={{ pt: "12px !important", pb: "4px !important" }}>
+      <Grid item xs={12} sx={{ pt: "8px !important", pb: "0px !important" }}>
         <p className="flex items-center gap-1 text-sm font-medium text-text-primary">
           Recommend an expert
-          <Tooltip title="Share a name or LinkedIn if there's someone specific you'd like us to approach">
+          <Tooltip title="Share a name or LinkedIn if there's someone specific you'd like us to approach to get the transcript">
             <IconButton size="small" sx={{ color: "inherit", p: 0.5 }}>
               <InfoOutlined fontSize="small" />
             </IconButton>
@@ -90,7 +99,7 @@ export default function Fields({ handleClose, handleFormChange }: FieldsProps) {
       <HookTextField
         {...registerState("suggestedExpertName")}
         textFieldProps={{ ...commonInputStyles, label: "Name" }}
-        gridProps={{ xs: 12 }}
+        gridProps={{ xs: 12, sx: { pt: "8px !important" } }}
       />
       <HookTextField
         {...registerState("suggestedExpertLinkedin")}

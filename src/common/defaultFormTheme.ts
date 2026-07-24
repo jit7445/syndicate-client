@@ -1,3 +1,5 @@
+import { COLORS } from "../constants/colors";
+
 export const defaultFormTheme = {
   typography: {
     fontFamily: [
@@ -17,7 +19,7 @@ export const defaultFormTheme = {
   },
   palette: {
     primary: {
-      main: "#EC9324",
+      main: COLORS.accent2,
     },
   },
 };

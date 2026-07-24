@@ -1,7 +1,15 @@
+import { useEffect, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Checkbox from "../../../../components/checkbox/Checkbox";
-import { DOMAIN_FILTER_OPTIONS } from "../../mockData";
+import { API_ENDPOINTS } from "../../../../constants/apiEndpoints";
+import { RequestServer } from "../../../../utils/services";
+import {
+  domainCheckboxSx,
+  domainTextFieldSx,
+} from "./DomainAutocomplete.styles";
+
+type DomainOption = { label: string; value: string; count: number };
 
 type DomainAutocompleteProps = {
   selectedDomains: string[];
@@ -12,8 +20,21 @@ export default function DomainAutocomplete({
   selectedDomains,
   setSelectedDomains,
 }: DomainAutocompleteProps) {
-  const selectedOptions = DOMAIN_FILTER_OPTIONS.filter((option) =>
-    selectedDomains.includes(option.value),
+  const [options, setOptions] = useState<DomainOption[]>([]);
+
+  useEffect(() => {
+    RequestServer<DomainOption[]>(API_ENDPOINTS.domains, "GET")
+      .then(setOptions)
+      .catch(() => setOptions([]));
+  }, []);
+
+  const selectedOptions = selectedDomains.map(
+    (domain) =>
+      options.find((option) => option.value === domain) ?? {
+        label: domain,
+        value: domain,
+        count: 0,
+      },
   );
 
   return (
@@ -23,7 +44,7 @@ export default function DomainAutocomplete({
       size="small"
       limitTags={2}
       getLimitTagsText={(more) => `+${more} more`}
-      options={DOMAIN_FILTER_OPTIONS}
+      options={options}
       value={selectedOptions}
       onChange={(_event, value) =>
         setSelectedDomains(value.map((option) => option.value))
@@ -38,10 +59,7 @@ export default function DomainAutocomplete({
       }}
       renderOption={(props, option, { selected }) => (
         <li {...props} key={option.value}>
-          <Checkbox
-            checked={selected}
-            sx={{ "&.Mui-checked": { color: "#EC9324" } }}
-          />
+          <Checkbox checked={selected} sx={domainCheckboxSx} />
           <span className="flex-1">{option.label}</span>
         </li>
       )}
@@ -49,16 +67,7 @@ export default function DomainAutocomplete({
         <TextField
           {...params}
           placeholder="Search domains"
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#EC9324",
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#EC9324",
-              },
-            },
-          }}
+          sx={domainTextFieldSx}
         />
       )}
     />

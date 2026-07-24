@@ -122,12 +122,23 @@ export default function Header({
           {loggedIn ? (
             <AccountMenu userName={userName} />
           ) : (
-            <button
-              onClick={() => openAuthDialog("signin")}
-              className="cursor-pointer"
-            >
-              LOGIN/SIGN-UP
-            </button>
+            <div className="flex items-center gap-2 rounded-full bg-accent/15 px-4 py-2 text-sm">
+              <button
+                type="button"
+                onClick={() => openAuthDialog("signin")}
+                className="cursor-pointer font-bold text-accent-2 hover:opacity-75 transition-colors"
+              >
+                Login
+              </button>
+              <span className="text-accent-2/30">|</span>
+              <button
+                type="button"
+                onClick={() => openAuthDialog("register")}
+                className="cursor-pointer font-bold text-accent-2 hover:opacity-75 transition-colors"
+              >
+                Sign up
+              </button>
+            </div>
           )}
         </nav>
       </div>

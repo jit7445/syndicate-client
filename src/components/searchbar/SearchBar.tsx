@@ -7,6 +7,12 @@ import InputBase from "@mui/material/InputBase";
 import Paper from "@mui/material/Paper";
 import React, { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import {
+  getPaperSx,
+  getInputBaseSx,
+  getOrangeCircleButtonSx,
+  getOrangeSendIconSx,
+} from "./SearchBar.styles";
 
 const SEARCH_ICON_SRC = "/assets/search.png";
 
@@ -33,6 +39,7 @@ type Props = {
   backgroundColor?: string;
   boxShadow?: string;
   inputFontSize?: string;
+  clearTriggersSearch?: boolean;
 };
 
 export type SearchBarHandle = {
@@ -61,6 +68,7 @@ const SearchBar = React.forwardRef<SearchBarHandle, Props>(
       backgroundColor = "rgba(111, 105, 105, 0.07)",
       boxShadow = "none",
       inputFontSize = "12px",
+      clearTriggersSearch = true,
     },
     ref,
   ) => {
@@ -91,7 +99,7 @@ const SearchBar = React.forwardRef<SearchBarHandle, Props>(
       if (getOnChange && onChangeFunction) {
         onChangeFunction(event.target.value);
       }
-      if (event.target.value === "") {
+      if (event.target.value === "" && clearTriggersSearch) {
         onSearch("");
       }
     };
@@ -106,33 +114,17 @@ const SearchBar = React.forwardRef<SearchBarHandle, Props>(
       >
         <Paper
           component="form"
-          sx={{
-            m: m || {
-              xs: "0.75rem 0",
-              sm: "0 1rem",
-            },
-            p:
-              p ||
-              (submitButtonVariant === "orange-circle"
-                ? height === "56px"
-                  ? "6px 8px 6px 20px"
-                  : "4px 6px 4px 16px"
-                : "5px 12px"),
-            paddingRight: "6px",
-            display: "flex",
-            alignItems: "center",
-            borderRadius: borderRadius,
-            backgroundColor: backgroundColor,
-            boxShadow: boxShadow,
-            maxWidth: maxWidth || "500px",
-            minWidth: minWidth || {
-              xs: "200px",
-              sm: "200px",
-              md: "250px",
-              lg: "400px",
-            },
-            height: height,
-          }}
+          sx={getPaperSx({
+            m,
+            p,
+            submitButtonVariant,
+            height,
+            borderRadius,
+            backgroundColor,
+            boxShadow,
+            maxWidth,
+            minWidth,
+          })}
           onSubmit={onSubmit}
         >
           {showSearchIcon && (
@@ -151,30 +143,27 @@ const SearchBar = React.forwardRef<SearchBarHandle, Props>(
             value={search}
             type={type || "text"}
             onChange={handleInputBaseChange}
-            sx={{
-              ml: 0,
-              flex: 1,
-              fontSize: inputFontSize,
-              fontWeight: "500",
-              pl: "10px",
-              "&::-webkit-search-clear-button": {
-                display: "none",
-              },
-              "&::-webkit-search-cancel-button": {
-                display: "none",
-              },
-            }}
+            sx={getInputBaseSx(inputFontSize)}
             placeholder={placeholder}
             inputProps={{ "aria-label": "Search bar" }}
           />
           {search && (
             <IconButton
+              type="button"
               sx={{
                 padding: "2px",
+                marginRight: "8px",
               }}
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 setSearch("");
-                onSearch("");
+                if (onChangeFunction) {
+                  onChangeFunction("");
+                }
+                if (clearTriggersSearch) {
+                  onSearch("");
+                }
               }}
             >
               <CloseIcon
@@ -187,29 +176,8 @@ const SearchBar = React.forwardRef<SearchBarHandle, Props>(
           {isLoading ? (
             <CircularProgress size={20} color="primary" sx={{ mr: 1 }} />
           ) : submitButtonVariant === "orange-circle" ? (
-            <IconButton
-              sx={{
-                padding: height === "56px" ? "10px" : "8px",
-                backgroundColor: "#ec9324",
-                color: "#ffffff",
-                "&:hover": {
-                  backgroundColor: "#d8811d",
-                },
-                width: height === "56px" ? "40px" : "32px",
-                height: height === "56px" ? "40px" : "32px",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              type="submit"
-            >
-              <SendIcon
-                sx={{
-                  fontSize: height === "56px" ? "20px" : "16px",
-                  color: "#ffffff",
-                }}
-              />
+            <IconButton sx={getOrangeCircleButtonSx(height)} type="submit">
+              <SendIcon sx={getOrangeSendIconSx(height)} />
             </IconButton>
           ) : (
             <IconButton

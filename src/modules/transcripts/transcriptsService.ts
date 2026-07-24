@@ -1,14 +1,16 @@
-import { MOCK_TRANSCRIPTS } from "./mockData";
+import { API_ENDPOINTS } from "../../constants/apiEndpoints";
+import { RequestServer } from "../../utils/services";
 import { DEFAULT_SIDEBAR_FILTERS } from "./components/filter-sidebar/constants";
 import type {
   SidebarFilterPayload,
   Transcript,
+  TranscriptsApiResponse,
   TranscriptsFilterPayload,
 } from "./types";
 
-// Builds the request body for the future POST /api/transcripts call — see
-// TranscriptsFilterPayload for the schema. Only non-default filters are
-// included, matching Infollion's getProfileDetails payload-building style.
+// Builds the request query for GET /api/transcripts — only non-default
+// filters are included, matching Infollion's getProfileDetails
+// payload-building style.
 export const buildTranscriptsFilterPayload = (
   search: string,
   filters: SidebarFilterPayload,
@@ -25,41 +27,19 @@ export const buildTranscriptsFilterPayload = (
   return payload;
 };
 
-// TODO: replace with a real API call once the backend exists. All
-// filtering/search/sort/pagination currently happens client-side in
-// TranscriptsList.tsx over the full mock array — that logic (see
-// utils/filterMatchers.ts for the exact price/date bucket rules) needs to
-// move server-side, driven by the payload below. To activate: uncomment the
-// block below (and its imports), delete the mock implementation beneath it.
-//
-// import { API_ENDPOINTS } from "../../constants/apiEndpoints";
-// import { RequestServer } from "../../utils/services";
-// import type { TranscriptsApiResponse } from "./types";
-//
-// export const fetchTranscripts = async (
-//   payload: TranscriptsFilterPayload,
-// ): Promise<TranscriptsApiResponse> =>
-//   RequestServer(API_ENDPOINTS.transcripts, "POST", payload);
 export const fetchTranscripts = async (
-  _payload?: TranscriptsFilterPayload,
-): Promise<Transcript[]> => {
-  return Promise.resolve(MOCK_TRANSCRIPTS);
+  payload: TranscriptsFilterPayload,
+): Promise<TranscriptsApiResponse> => {
+  const params = new URLSearchParams();
+  params.set("page", String(payload.page));
+  params.set("pageSize", String(payload.pageSize));
+  if (payload.search) params.set("search", payload.search);
+  if (payload.in___domain) params.set("in___domain", payload.in___domain);
+  if (payload.price) params.set("price", payload.price);
+  if (payload.publishedDate) params.set("publishedDate", payload.publishedDate);
+
+  return RequestServer(`${API_ENDPOINTS.transcripts}?${params}`, "GET");
 };
 
-// TODO: replace with a real API call once the backend exists.
-// GET /api/transcripts/:id -> Transcript (preview/teaser text only — never
-// the full paid content; see usePurchaseActions.ts for where the full
-// content must be served from a separate, purchase-gated endpoint instead).
-// To activate: uncomment the block below (and its imports), delete the mock
-// implementation beneath it.
-//
-// import { API_ENDPOINTS } from "../../constants/apiEndpoints";
-// import { RequestServer } from "../../utils/services";
-//
-// export const fetchTranscriptById = async (id: string): Promise<Transcript> =>
-//   RequestServer(API_ENDPOINTS.transcriptDetail.replace(":id", id), "GET");
-export const fetchTranscriptById = async (id: string): Promise<Transcript> => {
-  const found = MOCK_TRANSCRIPTS.find((t) => t.id === id);
-  if (!found) throw new Error("Transcript not found");
-  return Promise.resolve(found);
-};
+export const fetchTranscriptById = async (id: string): Promise<Transcript> =>
+  RequestServer(API_ENDPOINTS.transcriptDetail.replace(":id", id), "GET");

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Button from "../../../../components/button/Button";
-import OrderCard from "./OrderCard";
+import PurchaseActions from "../../../transcripts/components/purchase-actions/PurchaseActions";
 import { APP_ROUTES } from "../../../../constants/appRoutes";
 import type { Order } from "../../../orders/types";
 
@@ -9,28 +9,50 @@ type PurchaseHistoryProps = {
 };
 
 export default function PurchaseHistory({ orders }: PurchaseHistoryProps) {
-  if (orders.length === 0) {
-    return (
-      <div className="mt-6 rounded-lg border border-gray-200 bg-main-background p-6 text-center">
-        <p className="text-text-secondary">
-          You haven't purchased any transcripts yet.
-        </p>
-        <Link to={APP_ROUTES.transcripts}>
-          <Button
-            variant="contained"
-            label="Browse Transcripts"
-            className="mt-4"
-          />
-        </Link>
-      </div>
-    );
-  }
+  const rows = orders.flatMap((order) =>
+    order.items.map((item) => ({ order, item })),
+  );
 
   return (
-    <div className="mt-6 flex flex-col gap-4">
-      {orders.map((order) => (
-        <OrderCard key={order.id} order={order} />
-      ))}
+    <div className="rounded-lg border border-gray-200 bg-main-background p-6">
+      <h2 className="text-xl font-bold text-text-primary">My Purchases</h2>
+      <p className="mt-1 text-sm text-text-secondary">
+        Transcripts you've bought
+      </p>
+
+      {rows.length === 0 ? (
+        <div className="mt-6 border-t border-gray-200 pt-6 text-center">
+          <p className="text-text-secondary">
+            You haven't purchased any transcripts yet.
+          </p>
+          <div className="mt-4">
+            <Link to={APP_ROUTES.transcripts}>
+              <Button variant="contained" label="Browse Transcripts" />
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-4 flex flex-col border-t border-gray-200">
+          {rows.map(({ order, item }) => (
+            <div
+              key={`${order.id}-${item.id}`}
+              className="flex items-center justify-between gap-4 border-b border-gray-100 py-4"
+            >
+              <div>
+                <Link
+                  to={APP_ROUTES.transcriptDetail.replace(":id", item.id)}
+                  className="text-sm font-medium text-text-primary hover:underline"
+                >
+                  {item.title}
+                </Link>
+              </div>
+              <div className="flex shrink-0 items-center gap-3">
+                <PurchaseActions transcript={item} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

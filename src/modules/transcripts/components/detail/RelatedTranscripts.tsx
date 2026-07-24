@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from "react";
 import TranscriptCard from "../cards/TranscriptCard";
 import { useTranscripts } from "../../hooks/useTranscripts";
+import { usePurchasedTranscriptIds } from "../../../orders/hooks/usePurchasedTranscriptIds";
 
 const RELATED_COUNT = 3;
 
@@ -14,10 +15,17 @@ export default function RelatedTranscripts({
   excludeId,
 }: RelatedTranscriptsProps) {
   const { transcripts, loadTranscripts } = useTranscripts();
+  const purchasedIds = usePurchasedTranscriptIds();
 
   useEffect(() => {
-    loadTranscripts();
-  }, []);
+    loadTranscripts({
+      page: 1,
+      pageSize: RELATED_COUNT + 1,
+      sort_by: "-date",
+      in___domain: domain,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [domain]);
 
   const relatedTranscripts = useMemo(
     () =>
@@ -36,7 +44,11 @@ export default function RelatedTranscripts({
       </h2>
       <div className="mt-4 flex flex-col gap-4">
         {relatedTranscripts.map((transcript) => (
-          <TranscriptCard key={transcript.id} transcript={transcript} />
+          <TranscriptCard
+            key={transcript.id}
+            transcript={transcript}
+            isPurchased={purchasedIds.includes(transcript.id)}
+          />
         ))}
       </div>
     </div>

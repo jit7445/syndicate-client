@@ -5,6 +5,11 @@ import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  getFormControlSx,
+  selectBaseSx,
+  menuItemSx,
+} from "./DropDownFilter.styles";
 
 type props = {
   setFilterPayload: (filter: string) => void;
@@ -34,13 +39,7 @@ export default function DropDownFilter({
   };
 
   return (
-    <FormControl
-      variant="standard"
-      sx={{
-        mx: 1,
-        minWidth: noMinWidth ? 0 : 70,
-      }}
-    >
+    <FormControl variant="standard" sx={getFormControlSx(noMinWidth)}>
       <Select
         labelId="expert-types"
         id="demo-simple-select-standard"
@@ -48,12 +47,7 @@ export default function DropDownFilter({
         onChange={handleChange}
         disableUnderline
         sx={{
-          fontSize: "0.75rem",
-          fontFamily: "inherit",
-          fontWeight: "400",
-          color: "rgba(37, 43, 59, 0.73)",
-          padding: "4px 0",
-          paddingTop: "6px",
+          ...selectBaseSx,
           ...selectSx,
         }}
         displayEmpty
@@ -61,12 +55,7 @@ export default function DropDownFilter({
         {dropDownItems.map(
           (item: { label: React.ReactNode; value: string }) => (
             <MenuItem
-              sx={{
-                fontSize: "0.75rem",
-                fontFamily: "inherit",
-                fontWeight: "400",
-                color: "#252B3B",
-              }}
+              sx={menuItemSx}
               key={item.value}
               value={item.value}
             >

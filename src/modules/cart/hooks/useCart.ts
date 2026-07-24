@@ -7,6 +7,7 @@ import {
   setCartItems,
 } from "../../../redux/cartSlice";
 import {
+  fetchCart,
   mergeGuestCartIntoAccount,
   syncAddCartItem,
   syncClearCart,
@@ -46,6 +47,14 @@ export const useCart = () => {
     mergeGuestCartAfterAuth: async () => {
       const merged = await mergeGuestCartIntoAccount(items);
       dispatch(setCartItems(merged));
+    },
+    // Hydrates the local cart from the server on app load — needed for an
+    // already-logged-in session on a fresh device/browser, where
+    // mergeGuestCartAfterAuth (which only runs right after an active
+    // sign-in) never fires.
+    loadCart: async () => {
+      const serverItems = await fetchCart();
+      if (serverItems) dispatch(setCartItems(serverItems));
     },
   };
 };

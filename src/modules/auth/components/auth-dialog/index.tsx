@@ -5,6 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useIsMobile } from "../../../../utils/hooks/useIsMobile";
 import AuthForm from "./form";
 import { MODE_COPY } from "../../constants";
+import { authDialogPaperSx } from "./AuthDialog.styles";
 import type { AuthDialogMode } from "../../types";
 
 type AuthDialogProps = {
@@ -41,14 +42,7 @@ export default function AuthDialog({ isOpen, handleClose, initialMode = "signin"
       onClose={handleClose}
       maxWidth="md"
       fullWidth
-      sx={{
-        "& .MuiDialog-paper": {
-          borderRadius: "16px",
-          overflow: "hidden",
-          height: "540px",
-          maxHeight: "90vh",
-        },
-      }}
+      sx={authDialogPaperSx}
     >
       <div className="flex h-full">
         {!isMobile && (
@@ -72,7 +66,7 @@ export default function AuthDialog({ isOpen, handleClose, initialMode = "signin"
               alt="Infollion"
               className="h-16 w-auto mx-auto"
             />
-            <h2 className="mt-1.5 text-2xl font-normal text-slate-700">
+            <h2 className="mt-1.5 text-[18px] font-medium text-slate-700">
               {title}
             </h2>
             <p className="mt-1 text-sm text-text-secondary">{subtitle}</p>
