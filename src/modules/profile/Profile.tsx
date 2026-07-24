@@ -44,7 +44,7 @@ export default function Profile() {
                 <UserDetails
                   userName={profile?.name ?? userName}
                   email={profile?.email ?? email}
-                  companyName={companyName}
+                  companyName={profile?.companyName ?? companyName}
                 />
               )}
               {activeTab === "purchases" && <PurchaseHistory orders={orders} />}

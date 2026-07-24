@@ -33,7 +33,12 @@ export const decodeJWT = (token: string): JWTPayload | null => {
 
 export const processToken = (
   token: string,
-  user?: { id?: string; name?: string; email?: string },
+  user?: {
+    id?: string;
+    name?: string;
+    email?: string;
+    companyName?: string | null;
+  },
 ): void => {
   setStorageItem("token", token);
   setStorageItem("authToken", token);
@@ -50,6 +55,7 @@ export const processToken = (
   if (userId) setStorageItem("userId", userId);
   if (userName) setStorageItem("userName", userName);
   if (email) setStorageItem("email", email);
+  if (user?.companyName) setStorageItem("companyName", user.companyName);
 };
 
 export const isLoggedIn = (): boolean => {

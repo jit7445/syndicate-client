@@ -5,6 +5,7 @@ export type Profile = {
   id: string;
   name: string;
   email: string;
+  companyName?: string | null;
 };
 
 export const fetchProfile = async (): Promise<Profile> =>

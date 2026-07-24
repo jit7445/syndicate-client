@@ -12,21 +12,15 @@ export const signIn = async (data: SignInFormValues): Promise<AuthResponse> =>
     password: data.password,
   });
 
-// The backend's register endpoint only takes {name, email, password} — it
-// has no concept of companyName, so that's kept client-side only, same as
-// before.
 export const register = async (
   data: RegisterFormValues,
-): Promise<AuthResponse> => {
-  if (data.companyName) {
-    localStorage.setItem("companyName", data.companyName);
-  }
-  return RequestServer(API_ENDPOINTS.register, "POST", {
+): Promise<AuthResponse> =>
+  RequestServer(API_ENDPOINTS.register, "POST", {
     name: data.fullName,
     email: data.workEmail,
     password: data.password,
+    companyName: data.companyName || undefined,
   });
-};
 
 export const sendForgotPasswordLink = async (email: string): Promise<void> =>
   RequestServer(API_ENDPOINTS.forgotPassword, "POST", { email });

@@ -20,8 +20,8 @@ export function TranscriptWaveform({ className = "" }: { className?: string }) {
     let w = 0;
     let h = 0;
     const seeds: number[] = [];
-    const BAR_W = 4;
-    const GAP = 6;
+    const BAR_W = 5;
+    const GAP = 5;
     let count = 0;
 
     const resize = () => {
@@ -77,7 +77,7 @@ export function TranscriptWaveform({ className = "" }: { className?: string }) {
           }
         }
         const barH = baseH * (1 + glow * 0.7);
-        const alpha = 0.08 + glow * 0.27;
+        const alpha = 0.3 + glow * 0.3;
 
         ctx.fillStyle = `rgba(232,148,26,${alpha})`;
         const y = midY - barH / 2;

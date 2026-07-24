@@ -129,7 +129,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mx-auto max-w-275 px-6 pb-32 pt-40 md:pb-40">
+        <div className="mx-auto max-w-[1100px] px-6 pb-32 pt-40 md:pb-40">
           <ContributorCta />
         </div>
 
